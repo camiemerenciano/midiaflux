@@ -500,7 +500,7 @@ function AddInteracaoForm({
           onChange={(e) => setConteudo(e.target.value)}
           rows={3}
           placeholder="O que foi discutido, decidido ou observado?"
-          className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white resize-none"
+          className="w-full text-sm text-slate-900 border border-slate-200 rounded-lg px-3 py-2 bg-white resize-none"
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -606,7 +606,7 @@ function AddFollowUpForm({
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
           placeholder="Descreva a ação e o objetivo da abordagem"
-          className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white"
+          className="w-full text-sm text-slate-900 border border-slate-200 rounded-lg px-3 py-2 bg-white"
         />
       </div>
       <div>

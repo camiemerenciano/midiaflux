@@ -5,16 +5,15 @@ export type TipoCliente = 'retainer' | 'projeto' | 'performance' | 'consultoria'
 export type StatusCliente = 'ativo' | 'pausado' | 'em_risco' | 'encerrado'
 
 export type CategoriaServico =
-  | 'trafego_pago'
-  | 'conteudo'
-  | 'branding'
-  | 'seo'
-  | 'email_marketing'
   | 'social_media'
-  | 'crm_automacao'
-  | 'consultoria'
+  | 'trafego_pago'
   | 'producao_video'
+  | 'fotografia'
   | 'design'
+  | 'branding'
+  | 'conteudo'
+  | 'consultoria'
+  | 'lancamentos'
 
 export type TipoEntrega =
   | 'relatorio_mensal'

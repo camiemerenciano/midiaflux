@@ -69,16 +69,15 @@ export const STATUS_CLIENTE_CONFIG: Record<
 }
 
 export const CATEGORIA_SERVICO_LABELS: Record<CategoriaServico, string> = {
-  trafego_pago: 'Tráfego Pago',
-  conteudo: 'Produção de Conteúdo',
-  branding: 'Branding',
-  seo: 'SEO',
-  email_marketing: 'E-mail Marketing',
-  social_media: 'Social Media',
-  crm_automacao: 'CRM / Automação',
-  consultoria: 'Consultoria',
-  producao_video: 'Produção de Vídeo',
-  design: 'Design Gráfico',
+  social_media:  'Social Media',
+  trafego_pago:  'Tráfego Pago',
+  producao_video:'Produção de Vídeo',
+  fotografia:    'Fotografia',
+  design:        'Design',
+  branding:      'Branding & Identidade',
+  conteudo:      'Produção de Conteúdo',
+  consultoria:   'Mentoria & Consultoria',
+  lancamentos:   'Lançamentos',
 }
 
 export const TIPO_ENTREGA_LABELS: Record<TipoEntrega, string> = {
@@ -94,16 +93,20 @@ export const TIPO_ENTREGA_LABELS: Record<TipoEntrega, string> = {
 }
 
 export const CATALOGO_SERVICOS: Servico[] = [
-  { id: 's1', nome: 'Gestão de Tráfego Pago (Google + Meta)', categoria: 'trafego_pago' },
-  { id: 's2', nome: 'Gestão de Tráfego Pago (Meta Ads)', categoria: 'trafego_pago' },
-  { id: 's3', nome: 'Produção de Conteúdo (Blog + LinkedIn)', categoria: 'conteudo' },
-  { id: 's4', nome: 'Social Media Management', categoria: 'social_media' },
-  { id: 's5', nome: 'SEO On-Page + Off-Page', categoria: 'seo' },
-  { id: 's6', nome: 'E-mail Marketing (fluxos + disparos)', categoria: 'email_marketing' },
-  { id: 's7', nome: 'Branding / Identidade Visual', categoria: 'branding' },
-  { id: 's8', nome: 'CRM e Automação de Marketing', categoria: 'crm_automacao' },
-  { id: 's9', nome: 'Consultoria Estratégica Mensal', categoria: 'consultoria' },
-  { id: 's10', nome: 'Produção de Vídeo (Reels + YouTube)', categoria: 'producao_video' },
-  { id: 's11', nome: 'Design Gráfico (peças avulsas)', categoria: 'design' },
-  { id: 's12', nome: 'Gestão de Tráfego Pago (Google Ads)', categoria: 'trafego_pago' },
+  { id: 's01', nome: 'Social Media',                                    categoria: 'social_media' },
+  { id: 's02', nome: 'Cobertura',                                        categoria: 'producao_video' },
+  { id: 's03', nome: 'Tráfego Pago',                                     categoria: 'trafego_pago' },
+  { id: 's04', nome: 'Google Meu Negócio',                               categoria: 'trafego_pago' },
+  { id: 's05', nome: 'Design',                                            categoria: 'design' },
+  { id: 's06', nome: 'Mentoria & Consultoria',                           categoria: 'consultoria' },
+  { id: 's07', nome: 'Branding / Identidade Visual',                     categoria: 'branding' },
+  { id: 's08', nome: 'Lançamentos',                                       categoria: 'lancamentos' },
+  { id: 's09', nome: 'Posicionamento de Marca',                          categoria: 'branding' },
+  { id: 's10', nome: 'Produção de Conteúdo',                             categoria: 'conteudo' },
+  { id: 's11', nome: 'Fotos Corporativas',                               categoria: 'fotografia' },
+  { id: 's12', nome: 'Palestras',                                         categoria: 'consultoria' },
+  { id: 's13', nome: 'Papelaria e Materiais Comerciais',                 categoria: 'design' },
+  { id: 's14', nome: 'Videomaker (captação e edição de vídeo)',          categoria: 'producao_video' },
+  { id: 's15', nome: 'Storymaker',                                        categoria: 'conteudo' },
+  { id: 's16', nome: 'Captação e Edição de Vídeos (avulso/pacotes)',     categoria: 'producao_video' },
 ]

@@ -186,7 +186,7 @@ export function NewLeadForm({ initialStage = 'lead_captado', onSave, onCancel }:
   )
 }
 
-const inputCls = 'w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+const inputCls = 'w-full text-sm text-slate-900 border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (

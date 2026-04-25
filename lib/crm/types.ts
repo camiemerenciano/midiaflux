@@ -28,6 +28,9 @@ export type Segmento =
   | 'imoveis'
   | 'industria'
   | 'servicos'
+  | 'estetica'
+  | 'beleza'
+  | 'moda'
   | 'outro'
 export type Sentimento = 'positivo' | 'neutro' | 'negativo'
 export type TipoInteracao =

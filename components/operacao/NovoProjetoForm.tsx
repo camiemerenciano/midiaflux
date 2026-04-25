@@ -170,5 +170,5 @@ export function NovoProjetoForm({ onSave, onCancel }: Props) {
   )
 }
 
-const inp = 'w-full text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500'
+const inp = 'w-full text-sm text-slate-900 border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500'
 const lbl = 'text-xs text-slate-500 mb-1 block'

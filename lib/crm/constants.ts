@@ -109,6 +109,9 @@ export const SEGMENTO_LABELS: Record<Segmento, string> = {
   imoveis: 'Imóveis',
   industria: 'Indústria',
   servicos: 'Serviços',
+  estetica: 'Estética',
+  beleza: 'Beleza',
+  moda: 'Moda',
   outro: 'Outro',
 }
 
@@ -133,7 +136,7 @@ export const TIPO_INTERACAO_LABELS = {
 }
 
 export const USUARIOS = [
-  { id: 'u1', nome: 'Lucas Andrade', iniciais: 'LA', cor: 'bg-blue-500' },
-  { id: 'u2', nome: 'Ana Costa', iniciais: 'AC', cor: 'bg-violet-500' },
-  { id: 'u3', nome: 'Rafael Mendes', iniciais: 'RM', cor: 'bg-emerald-500' },
+  { id: 'u1', nome: 'Camila',  iniciais: 'CA', cor: 'bg-blue-500' },
+  { id: 'u2', nome: 'Gabriel', iniciais: 'GA', cor: 'bg-violet-500' },
+  { id: 'u3', nome: 'Geovana', iniciais: 'GE', cor: 'bg-emerald-500' },
 ]

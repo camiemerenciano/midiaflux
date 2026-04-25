@@ -22,23 +22,37 @@ export const CATEGORIA_RECEITA_LABELS: Record<CategoriaReceita, string> = {
 
 export const CATEGORIA_CUSTO_LABELS: Record<CategoriaCusto, string> = {
   pessoal:       '👥 Pessoal',
+  pro_labore:    '💼 Pró-labore',
   ferramentas:   '🛠️ Ferramentas & SaaS',
+  assinaturas:   '🔄 Assinaturas',
   midia:         '📣 Verba de Mídia',
   fornecedores:  '🤝 Fornecedores',
   infraestrutura:'🏢 Infraestrutura',
   impostos:      '🏛️ Impostos',
   marketing:     '📢 Marketing Próprio',
+  curso:         '🎓 Curso & Capacitação',
+  beleza:        '💅 Beleza',
+  transporte:    '🚗 Transporte',
+  alimentacao:   '🍽️ Alimentação',
+  investimentos: '📈 Investimentos',
   outros:        '📋 Outros',
 }
 
 export const CATEGORIA_CUSTO_COR: Record<CategoriaCusto, string> = {
   pessoal:       'bg-blue-500',
+  pro_labore:    'bg-blue-700',
   ferramentas:   'bg-violet-500',
+  assinaturas:   'bg-violet-300',
   midia:         'bg-orange-500',
   fornecedores:  'bg-teal-500',
   infraestrutura:'bg-slate-500',
   impostos:      'bg-red-500',
   marketing:     'bg-pink-500',
+  curso:         'bg-emerald-500',
+  beleza:        'bg-rose-400',
+  transporte:    'bg-amber-500',
+  alimentacao:   'bg-yellow-500',
+  investimentos: 'bg-green-600',
   outros:        'bg-gray-400',
 }
 

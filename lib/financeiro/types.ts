@@ -16,13 +16,20 @@ export type CategoriaReceita =
   | 'outro'
 
 export type CategoriaCusto =
-  | 'pessoal'       // salários, pró-labore, freelancers
-  | 'ferramentas'   // SaaS, licenças, assinaturas
-  | 'midia'         // verba de mídia repassada
-  | 'fornecedores'  // gráficas, produtoras, outros
-  | 'infraestrutura'// escritório, internet, hosting
+  | 'pessoal'
+  | 'pro_labore'
+  | 'ferramentas'
+  | 'assinaturas'
+  | 'midia'
+  | 'fornecedores'
+  | 'infraestrutura'
   | 'impostos'
-  | 'marketing'     // prospecção da própria agência
+  | 'marketing'
+  | 'curso'
+  | 'beleza'
+  | 'transporte'
+  | 'alimentacao'
+  | 'investimentos'
   | 'outros'
 
 export interface Lancamento {

@@ -161,8 +161,13 @@ export default function DashboardPage() {
 
       return { cliente, mrrCliente, statusPagamento, statusProjeto, tarefasAtrasadas: tarefasAtrasadasCliente.length, risco }
     }).sort((a, b) => {
-      const o = { alto: 0, medio: 1, baixo: 2 }
-      return o[a.risco] - o[b.risco]
+const o: Record<"alto" | "medio" | "baixo", number> = {
+  alto: 0,
+  medio: 1,
+  baixo: 2,
+}
+
+return o[a.risco as "alto" | "medio" | "baixo"] - o[b.risco as "alto" | "medio" | "baixo"]
     })
   }, [clientesAtivos, contratos, lancamentosMes, projetos, tarefasAtrasadas])
 

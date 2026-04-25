@@ -16,7 +16,7 @@ import { NovoLancamentoForm } from '@/components/financeiro/NovoLancamentoForm'
 import {
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle2,
   Plus, ChevronLeft, ChevronRight, DollarSign,
-  Target, Clock, BarChart3,
+  Target, Clock, BarChart3, Trash2,
 } from 'lucide-react'
 
 type Tab = 'visao_geral' | 'receitas' | 'custos' | 'forecast'
@@ -29,7 +29,7 @@ export default function FinanceiroPage() {
     lancamentos, getLancamentosByCompetencia,
     getResumoMensal, getResumoRange,
     getInadimplentes, getAlertasFinanceiros,
-    marcarPago, marcarAtrasado, addLancamento,
+    marcarPago, marcarAtrasado, addLancamento, removeLancamento,
   } = useFinanceiroStore()
 
   const { clientes } = useClientesStore()
@@ -331,6 +331,7 @@ export default function FinanceiroPage() {
               lancamentos={receitasMes}
               onMarcarPago={marcarPago}
               onMarcarAtrasado={marcarAtrasado}
+              onRemover={removeLancamento}
               tipo="receita"
             />
           </div>
@@ -353,6 +354,7 @@ export default function FinanceiroPage() {
               lancamentos={custosMes}
               onMarcarPago={marcarPago}
               onMarcarAtrasado={marcarAtrasado}
+              onRemover={removeLancamento}
               tipo="custo"
             />
           </div>
@@ -464,14 +466,16 @@ export default function FinanceiroPage() {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function TabelaLancamentos({
-  lancamentos, onMarcarPago, onMarcarAtrasado, tipo,
+  lancamentos, onMarcarPago, onMarcarAtrasado, onRemover, tipo,
 }: {
   lancamentos: Lancamento[]
   onMarcarPago: (id: string) => void
   onMarcarAtrasado: (id: string) => void
+  onRemover: (id: string) => void
   tipo: 'receita' | 'custo'
 }) {
   const { clientes } = useClientesStore()
+  const [confirmandoId, setConfirmandoId] = useState<string | null>(null)
 
   if (lancamentos.length === 0)
     return <p className="text-sm text-slate-400 text-center py-12">Nenhum lançamento neste mês.</p>
@@ -496,14 +500,15 @@ function TabelaLancamentos({
             const cat = tipo === 'receita'
               ? CATEGORIA_RECEITA_LABELS[l.categoria as keyof typeof CATEGORIA_RECEITA_LABELS]
               : CATEGORIA_CUSTO_LABELS[l.categoria as keyof typeof CATEGORIA_CUSTO_LABELS]
+            const confirmando = confirmandoId === l.id
             return (
-              <tr key={l.id} className={`hover:bg-slate-50 transition-colors ${l.status === 'cancelado' ? 'opacity-40' : ''}`}>
+              <tr key={l.id} className={`transition-colors ${l.status === 'cancelado' ? 'opacity-40' : confirmando ? 'bg-red-50' : 'hover:bg-slate-50'}`}>
                 <td className="px-4 py-3">
                   <p className="font-medium text-slate-700 leading-tight">{l.descricao}</p>
                   {cliente && <p className="text-xs text-slate-400">{cliente.nome_empresa}</p>}
                   {l.observacoes && <p className="text-xs text-slate-400 italic mt-0.5">{l.observacoes}</p>}
                 </td>
-                <td className="px-3 py-3 text-xs text-slate-500">{cat?.replace(/[🔄📦🚀💡🎯📋👥🛠️📣🤝🏢🏛️📢]/g, '').trim() ?? l.categoria}</td>
+                <td className="px-3 py-3 text-xs text-slate-500">{cat?.replace(/[🔄📦🚀💡🎯📋👥🛠️📣🤝🏢🏛️📢💼🎓💅🚗🍽️📈]/g, '').trim() ?? l.categoria}</td>
                 {tipo === 'receita' && <td className="px-3 py-3 text-xs text-slate-400">{l.nota_fiscal ?? '—'}</td>}
                 <td className="px-3 py-3 text-xs text-slate-600">
                   {formatarData(l.data_vencimento)}
@@ -512,17 +517,38 @@ function TabelaLancamentos({
                 <td className="px-3 py-3 text-right font-bold text-slate-800">{formatarMoeda(l.valor)}</td>
                 <td className="px-3 py-3 text-center"><StatusBadge status={l.status} /></td>
                 <td className="px-4 py-3 text-right">
-                  {l.status === 'emitido' && tipo === 'receita' && (
-                    <button onClick={() => onMarcarPago(l.id)}
-                      className="text-xs text-emerald-600 hover:text-emerald-700 font-medium">Marcar pago</button>
-                  )}
-                  {l.status === 'atrasado' && (
-                    <button onClick={() => onMarcarPago(l.id)}
-                      className="text-xs text-emerald-600 hover:text-emerald-700 font-medium">Recebido</button>
-                  )}
-                  {l.status === 'previsto' && (
-                    <button onClick={() => onMarcarPago(l.id)}
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium">Confirmar</button>
+                  {confirmando ? (
+                    <div className="flex items-center gap-2 justify-end">
+                      <span className="text-xs text-red-600 font-medium">Remover?</span>
+                      <button onClick={() => { onRemover(l.id); setConfirmandoId(null) }}
+                        className="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 font-medium">
+                        Sim
+                      </button>
+                      <button onClick={() => setConfirmandoId(null)}
+                        className="text-xs border border-slate-200 text-slate-500 px-2 py-1 rounded hover:bg-slate-100">
+                        Não
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3 justify-end">
+                      {l.status === 'emitido' && tipo === 'receita' && (
+                        <button onClick={() => onMarcarPago(l.id)}
+                          className="text-xs text-emerald-600 hover:text-emerald-700 font-medium">Marcar pago</button>
+                      )}
+                      {l.status === 'atrasado' && (
+                        <button onClick={() => onMarcarPago(l.id)}
+                          className="text-xs text-emerald-600 hover:text-emerald-700 font-medium">Recebido</button>
+                      )}
+                      {l.status === 'previsto' && (
+                        <button onClick={() => onMarcarPago(l.id)}
+                          className="text-xs text-blue-600 hover:text-blue-700 font-medium">Confirmar</button>
+                      )}
+                      <button onClick={() => setConfirmandoId(l.id)}
+                        className="text-slate-300 hover:text-red-500 transition-colors p-1 rounded hover:bg-red-50"
+                        title="Remover lançamento">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>

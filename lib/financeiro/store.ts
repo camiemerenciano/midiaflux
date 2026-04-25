@@ -18,6 +18,7 @@ interface FinanceiroStore {
 
   addLancamento: (data: Omit<Lancamento, 'id' | 'criado_em'>) => void
   updateLancamento: (id: string, data: Partial<Lancamento>) => void
+  removeLancamento: (id: string) => void
   marcarPago: (id: string, dataPagamento?: string) => void
   marcarAtrasado: (id: string) => void
 
@@ -52,6 +53,11 @@ export const useFinanceiroStore = create<FinanceiroStore>()(
       updateLancamento: (id, data) =>
         set((s) => ({
           lancamentos: s.lancamentos.map((l) => l.id === id ? { ...l, ...data } : l),
+        })),
+
+      removeLancamento: (id) =>
+        set((s) => ({
+          lancamentos: s.lancamentos.filter((l) => l.id !== id),
         })),
 
       marcarPago: (id, dataPagamento) =>

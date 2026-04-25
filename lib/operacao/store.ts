@@ -3,7 +3,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Projeto, Tarefa, Comentario, StatusTarefa, StatusProjeto } from './types'
-import { mockProjetos, mockTarefas, mockComentarios } from './mock-data'
 
 function recalcularProgresso(tarefas: Tarefa[]): number {
   if (tarefas.length === 0) return 0
@@ -49,9 +48,9 @@ function now() { return new Date().toISOString() }
 export const useOperacaoStore = create<OperacaoStore>()(
   persist(
     (set, get) => ({
-      projetos: mockProjetos,
-      tarefas: mockTarefas,
-      comentarios: mockComentarios,
+      projetos: [],
+      tarefas: [],
+      comentarios: [],
 
       addProjeto: (data) => {
         const id = gid()
@@ -152,7 +151,7 @@ export const useOperacaoStore = create<OperacaoStore>()(
       getProjetosAguardandoCliente: () =>
         get().projetos.filter((p) => p.status === 'aguardando_cliente'),
     }),
-    { name: 'midiaflux-operacao' }
+    { name: 'midiaflux-operacao-v2' }
   )
 )
 

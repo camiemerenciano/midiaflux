@@ -3,7 +3,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Lancamento, MetaMensal, StatusLancamento, ResumoMensal } from './types'
-import { mockLancamentos, mockMetas } from './mock-data'
 import { ALERTA_INADIMPLENCIA_DIAS } from './constants'
 
 function gid() { return crypto.randomUUID() }
@@ -42,8 +41,8 @@ export interface AlertaFinanceiro {
 export const useFinanceiroStore = create<FinanceiroStore>()(
   persist(
     (set, get) => ({
-      lancamentos: mockLancamentos,
-      metas: mockMetas,
+      lancamentos: [],
+      metas: [],
 
       addLancamento: (data) =>
         set((s) => ({
@@ -169,6 +168,6 @@ export const useFinanceiroStore = create<FinanceiroStore>()(
         })
       },
     }),
-    { name: 'midiaflux-financeiro' }
+    { name: 'midiaflux-financeiro-v2' }
   )
 )

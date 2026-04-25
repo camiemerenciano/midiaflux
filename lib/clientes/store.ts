@@ -3,7 +3,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Cliente, ContatoCliente, Contrato, EntregaHistorico, StatusCliente, TipoCliente } from './types'
-import { mockClientes, mockContatos, mockContratos, mockEntregas } from './mock-data'
 
 interface ClientesStore {
   clientes: Cliente[]
@@ -43,10 +42,10 @@ function now(): string {
 export const useClientesStore = create<ClientesStore>()(
   persist(
     (set, get) => ({
-      clientes: mockClientes,
-      contatos: mockContatos,
-      contratos: mockContratos,
-      entregas: mockEntregas,
+      clientes: [],
+      contatos: [],
+      contratos: [],
+      entregas: [],
 
       addCliente: (data) => {
         const id = gid()
@@ -123,6 +122,6 @@ export const useClientesStore = create<ClientesStore>()(
       getContatosByCliente: (clienteId) =>
         get().contatos.filter((c) => c.cliente_id === clienteId),
     }),
-    { name: 'midiaflux-clientes' }
+    { name: 'midiaflux-clientes-v2' }
   )
 )

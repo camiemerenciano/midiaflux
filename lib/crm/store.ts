@@ -5,7 +5,6 @@ import { persist } from 'zustand/middleware'
 import { Lead, Interacao, FollowUp, FunnelStage } from './types'
 import { STAGE_CONFIG } from './constants'
 import { calcularScoreTotal } from './score'
-import { mockLeads, mockInteracoes, mockFollowUps } from './mock-data'
 
 interface CRMStore {
   leads: Lead[]
@@ -31,9 +30,9 @@ function agora(): string {
 export const useCRMStore = create<CRMStore>()(
   persist(
     (set) => ({
-      leads: mockLeads,
-      interacoes: mockInteracoes,
-      followUps: mockFollowUps,
+      leads: [],
+      interacoes: [],
+      followUps: [],
 
       addLead: (leadData) => {
         const score_total = calcularScoreTotal(
@@ -111,6 +110,6 @@ export const useCRMStore = create<CRMStore>()(
         }))
       },
     }),
-    { name: 'midiaflux-crm' }
+    { name: 'midiaflux-crm-v2' }
   )
 )

@@ -5,7 +5,7 @@ import { STATUS_PROJETO_CONFIG, PRIORIDADE_CONFIG, TIPO_PROJETO_LABELS } from '@
 import { isTarefaAtrasada } from '@/lib/operacao/store'
 import { USUARIOS } from '@/lib/crm/constants'
 import { formatarData } from '@/lib/crm/score'
-import { mockClientes } from '@/lib/clientes/mock-data'
+import { useClientesStore } from '@/lib/clientes/store'
 import { Calendar, AlertTriangle, Clock, CheckCircle2 } from 'lucide-react'
 
 interface Props {
@@ -15,11 +15,12 @@ interface Props {
 }
 
 export function ProjetoCard({ projeto, tarefas, onClick }: Props) {
+  const { clientes } = useClientesStore()
   const statusConfig = STATUS_PROJETO_CONFIG[projeto.status]
   const prioConfig = PRIORIDADE_CONFIG[projeto.prioridade]
   const responsavel = USUARIOS.find((u) => u.id === projeto.responsavel_id)
   const equipe = USUARIOS.filter((u) => projeto.equipe_ids.includes(u.id))
-  const cliente = mockClientes.find((c) => c.id === projeto.cliente_id)
+  const cliente = clientes.find((c) => c.id === projeto.cliente_id)
 
   const tarefasConcluidas = tarefas.filter((t) => t.status === 'concluido').length
   const tarefasAtrasadas = tarefas.filter(isTarefaAtrasada).length

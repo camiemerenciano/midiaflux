@@ -8,6 +8,7 @@ import { USUARIOS } from '@/lib/crm/constants'
 import { formatarMoeda, formatarData } from '@/lib/crm/score'
 import { ClienteCard } from '@/components/clientes/ClienteCard'
 import { ClienteModal } from '@/components/clientes/ClienteModal'
+import { NovoClienteForm } from '@/components/clientes/NovoClienteForm'
 import { Search, Plus, TrendingUp, AlertTriangle, Users, RefreshCw } from 'lucide-react'
 
 const TODOS_TIPOS: (TipoCliente | 'todos')[] = ['todos', 'retainer', 'projeto', 'performance', 'consultoria']
@@ -16,11 +17,12 @@ const TODOS_STATUS: (StatusCliente | 'todos')[] = ['todos', 'ativo', 'em_risco',
 export default function ClientesPage() {
   const {
     clientes, contatos, contratos, entregas,
-    updateStatus, addEntrega, getMRR,
+    updateStatus, addEntrega, addCliente, addContato, addContrato, getMRR,
     getContratosAtivos, getEntregasByCliente, getContatosByCliente,
   } = useClientesStore()
 
   const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(null)
+  const [showNovoCliente, setShowNovoCliente] = useState(false)
   const [busca, setBusca] = useState('')
   const [filtroTipo, setFiltroTipo] = useState<TipoCliente | 'todos'>('todos')
   const [filtroStatus, setFiltroStatus] = useState<StatusCliente | 'todos'>('todos')
@@ -65,7 +67,10 @@ export default function ClientesPage() {
             <h1 className="text-xl font-bold text-slate-800">Base de Clientes</h1>
             <p className="text-sm text-slate-500">{clientes.length} clientes · {clientesAtivos} ativos</p>
           </div>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-sm shadow-sm">
+          <button
+            onClick={() => setShowNovoCliente(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-sm shadow-sm"
+          >
             <Plus size={16} />
             Novo Cliente
           </button>
@@ -240,6 +245,19 @@ export default function ClientesPage() {
             setClienteSelecionado((prev) => prev ? { ...prev, status } : null)
           }}
           onAddEntrega={addEntrega}
+        />
+      )}
+
+      {/* Formulário novo cliente */}
+      {showNovoCliente && (
+        <NovoClienteForm
+          onSave={(clienteData, contatoData, contratoData) => {
+            const clienteId = addCliente(clienteData)
+            addContato({ ...contatoData, cliente_id: clienteId })
+            addContrato({ ...contratoData, cliente_id: clienteId })
+            setShowNovoCliente(false)
+          }}
+          onCancel={() => setShowNovoCliente(false)}
         />
       )}
     </div>

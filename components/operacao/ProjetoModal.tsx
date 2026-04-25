@@ -12,7 +12,7 @@ import {
 import { isTarefaAtrasada, diasAtraso } from '@/lib/operacao/store'
 import { USUARIOS } from '@/lib/crm/constants'
 import { formatarData, formatarDataHora } from '@/lib/crm/score'
-import { mockClientes } from '@/lib/clientes/mock-data'
+import { useClientesStore } from '@/lib/clientes/store'
 import {
   X, ChevronDown, ChevronRight, Plus, AlertTriangle, Clock,
   CheckCircle2, XCircle, MessageSquare, ChevronUp, Calendar,
@@ -41,8 +41,9 @@ export function ProjetoModal({
   const [showAddTarefa, setShowAddTarefa] = useState(false)
   const [tarefaAberta, setTarefaAberta] = useState<string | null>(null)
 
+  const { clientes } = useClientesStore()
   const statusConfig = STATUS_PROJETO_CONFIG[projeto.status]
-  const cliente = mockClientes.find((c) => c.id === projeto.cliente_id)
+  const cliente = clientes.find((c) => c.id === projeto.cliente_id)
   const responsavel = USUARIOS.find((u) => u.id === projeto.responsavel_id)
   const equipe = USUARIOS.filter((u) => projeto.equipe_ids.includes(u.id))
 

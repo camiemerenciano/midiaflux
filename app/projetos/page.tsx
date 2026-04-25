@@ -9,7 +9,8 @@ import { USUARIOS } from '@/lib/crm/constants'
 import { formatarDataHora } from '@/lib/crm/score'
 import { ProjetoCard } from '@/components/operacao/ProjetoCard'
 import { ProjetoModal } from '@/components/operacao/ProjetoModal'
-import { mockClientes } from '@/lib/clientes/mock-data'
+import { NovoProjetoForm } from '@/components/operacao/NovoProjetoForm'
+import { useClientesStore } from '@/lib/clientes/store'
 import {
   Search, Plus, AlertTriangle, Clock, CheckCircle2,
   FolderKanban, Zap, Activity,
@@ -20,19 +21,22 @@ const STATUS_FILTRO: (StatusProjeto | 'todos')[] = ['todos', 'em_andamento', 'ag
 export default function ProjetosPage() {
   const {
     projetos, tarefas, comentarios,
-    moverTarefa, addTarefa, addComentario,
+    addProjeto, moverTarefa, addTarefa, addComentario,
     updateStatusProjeto, getTarefasByProjeto,
     getTarefasAtrasadas, getProjetosAguardandoCliente,
   } = useOperacaoStore()
 
+  const { clientes } = useClientesStore()
+
   const [projetoSelecionado, setProjetoSelecionado] = useState<Projeto | null>(null)
+  const [showNovoProjeto, setShowNovoProjeto] = useState(false)
   const [busca, setBusca] = useState('')
   const [filtroStatus, setFiltroStatus] = useState<StatusProjeto | 'todos'>('todos')
   const [filtroResponsavel, setFiltroResponsavel] = useState('')
 
   const projetosFiltrados = useMemo(() => {
     return projetos.filter((p) => {
-      const cliente = mockClientes.find((c) => c.id === p.cliente_id)
+      const cliente = clientes.find((c) => c.id === p.cliente_id)
       const matchBusca =
         !busca ||
         p.nome.toLowerCase().includes(busca.toLowerCase()) ||
@@ -63,7 +67,10 @@ export default function ProjetosPage() {
             <h1 className="text-xl font-bold text-slate-800">Operação & Produção</h1>
             <p className="text-sm text-slate-500">{projetos.length} projetos · {ativos} em andamento</p>
           </div>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-sm shadow-sm">
+          <button
+            onClick={() => setShowNovoProjeto(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-sm shadow-sm"
+          >
             <Plus size={16} /> Novo Projeto
           </button>
         </div>
@@ -206,6 +213,17 @@ export default function ProjetosPage() {
             updateStatusProjeto(id, status)
             setProjetoSelecionado((prev) => prev ? { ...prev, status } : null)
           }}
+        />
+      )}
+
+      {/* Formulário novo projeto */}
+      {showNovoProjeto && (
+        <NovoProjetoForm
+          onSave={(projetoData) => {
+            addProjeto(projetoData)
+            setShowNovoProjeto(false)
+          }}
+          onCancel={() => setShowNovoProjeto(false)}
         />
       )}
     </div>

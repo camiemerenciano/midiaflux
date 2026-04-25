@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Lancamento, TipoLancamento, CategoriaReceita, CategoriaCusto } from '@/lib/financeiro/types'
 import { CATEGORIA_RECEITA_LABELS, CATEGORIA_CUSTO_LABELS } from '@/lib/financeiro/constants'
-import { mockClientes } from '@/lib/clientes/mock-data'
+import { useClientesStore } from '@/lib/clientes/store'
 import { X } from 'lucide-react'
 
 interface Props {
@@ -14,6 +14,7 @@ interface Props {
 }
 
 export function NovoLancamentoForm({ tipoInicial = 'receita', competenciaInicial, onSave, onCancel }: Props) {
+  const { clientes } = useClientesStore()
   const hoje = new Date().toISOString().slice(0, 10)
   const comp = competenciaInicial ?? new Date().toISOString().slice(0, 7)
 
@@ -88,7 +89,7 @@ export function NovoLancamentoForm({ tipoInicial = 'receita', competenciaInicial
               <Field label="Cliente">
                 <select value={cliente_id} onChange={(e) => setClienteId(e.target.value)} className={inputCls}>
                   <option value="">Sem cliente específico</option>
-                  {mockClientes.map((c) => <option key={c.id} value={c.id}>{c.nome_empresa}</option>)}
+                  {clientes.map((c) => <option key={c.id} value={c.id}>{c.nome_empresa}</option>)}
                 </select>
               </Field>
             )}

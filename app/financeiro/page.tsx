@@ -11,7 +11,7 @@ import {
   competenciaLabel,
 } from '@/lib/financeiro/constants'
 import { formatarMoeda, formatarData } from '@/lib/crm/score'
-import { mockClientes } from '@/lib/clientes/mock-data'
+import { useClientesStore } from '@/lib/clientes/store'
 import { NovoLancamentoForm } from '@/components/financeiro/NovoLancamentoForm'
 import {
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle2,
@@ -31,6 +31,8 @@ export default function FinanceiroPage() {
     getInadimplentes, getAlertasFinanceiros,
     marcarPago, marcarAtrasado, addLancamento,
   } = useFinanceiroStore()
+
+  const { clientes } = useClientesStore()
 
   const [tab, setTab] = useState<Tab>('visao_geral')
   const [competencia, setCompetencia] = useState(COMPETENCIA_ATUAL)
@@ -230,7 +232,7 @@ export default function FinanceiroPage() {
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Receitas por cliente</p>
               <div className="space-y-2">
                 {receitasMes.map((l) => {
-                  const cliente = mockClientes.find((c) => c.id === l.cliente_id)
+                  const cliente = clientes.find((c) => c.id === l.cliente_id)
                   const cfg = STATUS_LANCAMENTO_CONFIG[l.status]
                   return (
                     <div key={l.id} className="flex items-center gap-3 bg-white rounded-lg border border-slate-200 px-3 py-2.5">
@@ -469,6 +471,8 @@ function TabelaLancamentos({
   onMarcarAtrasado: (id: string) => void
   tipo: 'receita' | 'custo'
 }) {
+  const { clientes } = useClientesStore()
+
   if (lancamentos.length === 0)
     return <p className="text-sm text-slate-400 text-center py-12">Nenhum lançamento neste mês.</p>
 
@@ -488,7 +492,7 @@ function TabelaLancamentos({
         </thead>
         <tbody className="divide-y divide-slate-100">
           {lancamentos.map((l) => {
-            const cliente = mockClientes.find((c) => c.id === l.cliente_id)
+            const cliente = clientes.find((c) => c.id === l.cliente_id)
             const cat = tipo === 'receita'
               ? CATEGORIA_RECEITA_LABELS[l.categoria as keyof typeof CATEGORIA_RECEITA_LABELS]
               : CATEGORIA_CUSTO_LABELS[l.categoria as keyof typeof CATEGORIA_CUSTO_LABELS]

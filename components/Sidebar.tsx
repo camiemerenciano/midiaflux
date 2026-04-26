@@ -17,7 +17,7 @@ import {
   ChevronUp,
   Check,
 } from 'lucide-react'
-import { USUARIOS } from '@/lib/crm/constants'
+import { useAgenciaStore } from '@/lib/agencia/store'
 
 const NAV_ITEMS = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -34,16 +34,19 @@ const STORAGE_KEY = 'midiaflux-usuario-ativo'
 
 export function Sidebar() {
   const pathname = usePathname()
-  const [usuarioId, setUsuarioId] = useState(USUARIOS[0].id)
+  const { membros } = useAgenciaStore()
+  const [usuarioId, setUsuarioId] = useState('')
   const [aberto, setAberto] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const salvo = localStorage.getItem(STORAGE_KEY)
-    if (salvo && USUARIOS.find(u => u.id === salvo)) {
+    if (salvo && membros.find(u => u.id === salvo)) {
       setUsuarioId(salvo)
+    } else if (membros.length > 0) {
+      setUsuarioId(membros[0].id)
     }
-  }, [])
+  }, [membros])
 
   useEffect(() => {
     function fechar(e: MouseEvent) {
@@ -61,7 +64,7 @@ export function Sidebar() {
     setAberto(false)
   }
 
-  const usuarioAtivo = USUARIOS.find(u => u.id === usuarioId) ?? USUARIOS[0]
+  const usuarioAtivo = membros.find(u => u.id === usuarioId) ?? membros[0]
 
   return (
     <aside className="w-56 bg-slate-900 flex flex-col h-screen flex-none">
@@ -110,6 +113,7 @@ export function Sidebar() {
         </Link>
 
         {/* Seletor de usuário */}
+        {usuarioAtivo && (
         <div className="mt-3 relative" ref={ref}>
           <button
             onClick={() => setAberto(!aberto)}
@@ -131,7 +135,7 @@ export function Sidebar() {
           {/* Dropdown */}
           {aberto && (
             <div className="absolute bottom-full left-0 right-0 mb-1 bg-slate-800 border border-slate-700 rounded-lg overflow-hidden shadow-xl">
-              {USUARIOS.map(u => (
+              {membros.map(u => (
                 <button
                   key={u.id}
                   onClick={() => selecionarUsuario(u.id)}
@@ -149,6 +153,7 @@ export function Sidebar() {
             </div>
           )}
         </div>
+        )}
       </div>
     </aside>
   )

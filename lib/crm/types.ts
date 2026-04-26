@@ -3,6 +3,8 @@ export type FunnelStage =
   | 'lead_qualificado'
   | 'abordagem_enviada'
   | 'conversa_iniciada'
+  | 'sem_retorno'
+  | 'follow_up'
   | 'reuniao_marcada'
   | 'proposta_enviada'
   | 'fechado'
@@ -56,6 +58,7 @@ export interface Lead {
   email: string
   telefone: string
   whatsapp: string
+  instagram?: string
   cnpj?: string
   site?: string
   segmento: Segmento
@@ -64,6 +67,8 @@ export interface Lead {
   estado?: string
   fonte: Fonte
   fonte_detalhe?: string
+  data_primeiro_contato?: string
+  quantidade_followup?: number
   responsavel_id: string
   status: FunnelStage
   valor_estimado?: number

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Lancamento, TipoLancamento, CategoriaReceita, CategoriaCusto } from '@/lib/financeiro/types'
+import { Lancamento, TipoLancamento, OrigemLancamento, CategoriaReceita, CategoriaCusto } from '@/lib/financeiro/types'
 import { CATEGORIA_RECEITA_LABELS, CATEGORIA_CUSTO_LABELS } from '@/lib/financeiro/constants'
 import { useClientesStore } from '@/lib/clientes/store'
 import { X } from 'lucide-react'
@@ -27,6 +27,7 @@ export function NovoLancamentoForm({ tipoInicial = 'receita', competenciaInicial
   const [data_vencimento, setDataVencimento] = useState(hoje)
   const [nota_fiscal, setNotaFiscal] = useState('')
   const [observacoes, setObservacoes] = useState('')
+  const [origem, setOrigem] = useState<OrigemLancamento>('empresa')
   const [recorrente, setRecorrente] = useState(false)
   const [marcarPago, setMarcarPago] = useState(false)
   const [parcelas, setParcelas] = useState(1)
@@ -55,6 +56,7 @@ export function NovoLancamentoForm({ tipoInicial = 'receita', competenciaInicial
 
     const items: Omit<Lancamento, 'id' | 'criado_em'>[] = Array.from({ length: n }, (_, i) => ({
       tipo,
+      origem,
       descricao: n > 1 ? `${descricao} ${i + 1}/${n}` : descricao,
       cliente_id: tipo === 'receita' ? cliente_id || undefined : undefined,
       categoria: categoria as CategoriaReceita | CategoriaCusto,
@@ -89,6 +91,18 @@ export function NovoLancamentoForm({ tipoInicial = 'receita', competenciaInicial
             <button onClick={() => { setTipo('custo'); setCategoria('pessoal') }}
               className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${tipo === 'custo' ? 'bg-red-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>
               ↓ Custo
+            </button>
+          </div>
+
+          {/* Origem */}
+          <div className="flex rounded-xl overflow-hidden border border-slate-200">
+            <button onClick={() => setOrigem('empresa')}
+              className={`flex-1 py-2 text-sm font-semibold transition-colors ${origem === 'empresa' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>
+              🏢 Empresa
+            </button>
+            <button onClick={() => setOrigem('pessoal')}
+              className={`flex-1 py-2 text-sm font-semibold transition-colors ${origem === 'pessoal' ? 'bg-violet-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>
+              👤 Pessoal
             </button>
           </div>
 

@@ -32,9 +32,12 @@ export type CategoriaCusto =
   | 'investimentos'
   | 'outros'
 
+export type OrigemLancamento = 'empresa' | 'pessoal'
+
 export interface Lancamento {
   id: string
   tipo: TipoLancamento
+  origem?: OrigemLancamento
   descricao: string
   cliente_id?: string   // só para receitas
   contrato_id?: string

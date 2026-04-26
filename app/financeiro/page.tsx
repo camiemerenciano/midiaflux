@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useFinanceiroStore } from '@/lib/financeiro/store'
-import { Lancamento } from '@/lib/financeiro/types'
+import { Lancamento, OrigemLancamento } from '@/lib/financeiro/types'
 import {
   STATUS_LANCAMENTO_CONFIG,
   CATEGORIA_RECEITA_LABELS,
@@ -21,8 +21,20 @@ import {
 
 type Tab = 'visao_geral' | 'receitas' | 'custos' | 'forecast'
 
-const COMPETENCIAS = ['2026-02', '2026-03', '2026-04', '2026-05', '2026-06']
-const COMPETENCIA_ATUAL = '2026-04'
+const COMPETENCIA_ATUAL = new Date().toISOString().slice(0, 7)
+
+function buildCompetencias(lancamentos: { competencia: string }[]): string[] {
+  const now = new Date()
+  const base = new Set<string>()
+  // sempre inclui 3 meses antes e 3 meses à frente do mês atual
+  for (let i = -3; i <= 3; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1)
+    base.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
+  }
+  // inclui todas as competências que já existem nos lançamentos
+  lancamentos.forEach((l) => base.add(l.competencia))
+  return Array.from(base).sort()
+}
 
 export default function FinanceiroPage() {
   const {
@@ -36,19 +48,23 @@ export default function FinanceiroPage() {
 
   const [tab, setTab] = useState<Tab>('visao_geral')
   const [competencia, setCompetencia] = useState(COMPETENCIA_ATUAL)
+  const [origem, setOrigem] = useState<OrigemLancamento | 'todos'>('todos')
   const [showNovoLancamento, setShowNovoLancamento] = useState(false)
   const [tipoNovo, setTipoNovo] = useState<'receita' | 'custo'>('receita')
 
+  const competencias = useMemo(() => buildCompetencias(lancamentos), [lancamentos])
+
   const resumo = useMemo(() => getResumoMensal(competencia), [competencia, lancamentos])
   const resumoAnterior = useMemo(() => {
-    const idx = COMPETENCIAS.indexOf(competencia)
-    return idx > 0 ? getResumoMensal(COMPETENCIAS[idx - 1]) : null
-  }, [competencia, lancamentos])
+    const idx = competencias.indexOf(competencia)
+    return idx > 0 ? getResumoMensal(competencias[idx - 1]) : null
+  }, [competencia, competencias, lancamentos])
   const resumoForecast = useMemo(() => getResumoRange(['2026-04', '2026-05', '2026-06']), [lancamentos])
   const inadimplentes = useMemo(() => getInadimplentes(), [lancamentos])
   const alertas = useMemo(() => getAlertasFinanceiros(), [lancamentos])
 
   const lancamentosMes = getLancamentosByCompetencia(competencia)
+    .filter((l) => origem === 'todos' || (l.origem ?? 'empresa') === origem)
   const receitasMes = lancamentosMes.filter((l) => l.tipo === 'receita').sort((a, b) => {
     const o = { atrasado: 0, emitido: 1, previsto: 2, pago: 3, cancelado: 4 }
     return (o[a.status] ?? 5) - (o[b.status] ?? 5)
@@ -67,9 +83,9 @@ export default function FinanceiroPage() {
     : null
 
   function navCompetencia(dir: -1 | 1) {
-    const idx = COMPETENCIAS.indexOf(competencia)
+    const idx = competencias.indexOf(competencia)
     const next = idx + dir
-    if (next >= 0 && next < COMPETENCIAS.length) setCompetencia(COMPETENCIAS[next])
+    if (next >= 0 && next < competencias.length) setCompetencia(competencias[next])
   }
 
   function deltaLabel(atual: number, anterior: number | null): React.ReactNode {
@@ -106,16 +122,36 @@ export default function FinanceiroPage() {
           </div>
         </div>
 
+        {/* Filtro de origem */}
+        <div className="flex items-center gap-1 mb-4 bg-slate-100 rounded-xl p-1 w-fit">
+          {([
+            ['todos', 'Todos'],
+            ['empresa', '🏢 Empresa'],
+            ['pessoal', '👤 Pessoal'],
+          ] as [OrigemLancamento | 'todos', string][]).map(([o, label]) => (
+            <button key={o} onClick={() => setOrigem(o)}
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
+                origem === o
+                  ? o === 'pessoal' ? 'bg-violet-600 text-white shadow-sm'
+                  : o === 'empresa' ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-white text-slate-800 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}>
+              {label}
+            </button>
+          ))}
+        </div>
+
         {/* Navegação de mês */}
         <div className="flex items-center gap-3 mb-4">
-          <button onClick={() => navCompetencia(-1)} disabled={COMPETENCIAS.indexOf(competencia) === 0}
+          <button onClick={() => navCompetencia(-1)} disabled={competencias.indexOf(competencia) === 0}
             className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 transition-colors">
             <ChevronLeft size={16} />
           </button>
           <h2 className="text-base font-bold text-slate-700 min-w-[160px] text-center">
             {competenciaLabel(competencia)}
           </h2>
-          <button onClick={() => navCompetencia(1)} disabled={COMPETENCIAS.indexOf(competencia) === COMPETENCIAS.length - 1}
+          <button onClick={() => navCompetencia(1)} disabled={competencias.indexOf(competencia) === competencias.length - 1}
             className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-30 transition-colors">
             <ChevronRight size={16} />
           </button>

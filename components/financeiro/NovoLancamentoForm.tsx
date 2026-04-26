@@ -142,38 +142,38 @@ export function NovoLancamentoForm({ tipoInicial = 'receita', competenciaInicial
           </Field>
 
           {/* Parcelas */}
-          <div className="grid grid-cols-2 gap-3 items-end">
-            <Field label="Parcelas">
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min={1}
-                  max={60}
-                  value={parcelas}
-                  onChange={(e) => setParcelas(Math.max(1, parseInt(e.target.value) || 1))}
-                  className={inputCls}
-                />
-              </div>
-            </Field>
-            {parcelas > 1 && valor && (
-              <div className="pb-2">
-                <p className="text-xs text-slate-500">
-                  {parcelas}× de{' '}
-                  <span className="font-semibold text-slate-700">
+          <Field label="Parcelas">
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                min={1}
+                max={60}
+                value={parcelas}
+                onChange={(e) => setParcelas(Math.max(1, parseInt(e.target.value) || 1))}
+                className="w-24 text-sm text-slate-900 border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {valor ? (
+                <div className="flex-1 flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+                  <span className="text-sm font-bold text-slate-800">{parcelas}×</span>
+                  <span className="text-sm text-slate-400">de</span>
+                  <span className="text-sm font-bold text-slate-800">
                     R$ {(parseFloat(valor.replace(',', '.')) / parcelas).toFixed(2).replace('.', ',')}
                   </span>
-                </p>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Competências: {competencia} até{' '}
-                  {(() => {
-                    const [y, m] = competencia.split('-').map(Number)
-                    const d = new Date(y, m - 1 + parcelas - 1, 1)
-                    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-                  })()}
-                </p>
-              </div>
-            )}
-          </div>
+                  {parcelas > 1 && (
+                    <span className="ml-auto text-xs text-slate-400">
+                      até {(() => {
+                        const [y, m] = competencia.split('-').map(Number)
+                        const d = new Date(y, m - 1 + parcelas - 1, 1)
+                        return `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
+                      })()}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <span className="text-sm text-slate-400">informe o valor para ver o cálculo</span>
+              )}
+            </div>
+          </Field>
 
           {/* Opções */}
           <div className="flex gap-4 pt-1">

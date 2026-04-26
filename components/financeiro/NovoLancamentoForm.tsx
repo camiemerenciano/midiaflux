@@ -9,7 +9,7 @@ import { X } from 'lucide-react'
 interface Props {
   tipoInicial?: TipoLancamento
   competenciaInicial?: string
-  onSave: (data: Omit<Lancamento, 'id' | 'criado_em'>) => void
+  onSave: (data: Omit<Lancamento, 'id' | 'criado_em'>[]) => void
   onCancel: () => void
 }
 
@@ -29,27 +29,46 @@ export function NovoLancamentoForm({ tipoInicial = 'receita', competenciaInicial
   const [observacoes, setObservacoes] = useState('')
   const [recorrente, setRecorrente] = useState(false)
   const [marcarPago, setMarcarPago] = useState(false)
+  const [parcelas, setParcelas] = useState(1)
 
   const categoriasDisponiveis = tipo === 'receita'
     ? CATEGORIA_RECEITA_LABELS
     : CATEGORIA_CUSTO_LABELS
 
+  function addMonthsToDate(dateStr: string, months: number): string {
+    const d = new Date(dateStr + 'T12:00:00')
+    d.setMonth(d.getMonth() + months)
+    return d.toISOString().slice(0, 10)
+  }
+
+  function addMonthsToCompetencia(comp: string, months: number): string {
+    const [y, m] = comp.split('-').map(Number)
+    const d = new Date(y, m - 1 + months, 1)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+  }
+
   function handleSave() {
     if (!descricao || !valor || !data_vencimento) return
-    onSave({
+    const valorTotal = parseFloat(valor.replace(',', '.'))
+    const n = Math.max(1, parcelas)
+    const valorParcela = parseFloat((valorTotal / n).toFixed(2))
+
+    const items: Omit<Lancamento, 'id' | 'criado_em'>[] = Array.from({ length: n }, (_, i) => ({
       tipo,
-      descricao,
+      descricao: n > 1 ? `${descricao} ${i + 1}/${n}` : descricao,
       cliente_id: tipo === 'receita' ? cliente_id || undefined : undefined,
       categoria: categoria as CategoriaReceita | CategoriaCusto,
-      valor: parseFloat(valor.replace(',', '.')),
-      competencia,
-      data_vencimento,
-      data_pagamento: marcarPago ? hoje : undefined,
-      status: marcarPago ? 'pago' : 'previsto',
+      valor: valorParcela,
+      competencia: addMonthsToCompetencia(competencia, i),
+      data_vencimento: addMonthsToDate(data_vencimento, i),
+      data_pagamento: marcarPago && i === 0 ? hoje : undefined,
+      status: marcarPago && i === 0 ? 'pago' : 'previsto',
       nota_fiscal: nota_fiscal || undefined,
       observacoes: observacoes || undefined,
       recorrente,
-    })
+    }))
+
+    onSave(items)
   }
 
   return (
@@ -122,6 +141,40 @@ export function NovoLancamentoForm({ tipoInicial = 'receita', competenciaInicial
               rows={2} placeholder="Informações adicionais..." className={`${inputCls} resize-none`} />
           </Field>
 
+          {/* Parcelas */}
+          <div className="grid grid-cols-2 gap-3 items-end">
+            <Field label="Parcelas">
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  max={60}
+                  value={parcelas}
+                  onChange={(e) => setParcelas(Math.max(1, parseInt(e.target.value) || 1))}
+                  className={inputCls}
+                />
+              </div>
+            </Field>
+            {parcelas > 1 && valor && (
+              <div className="pb-2">
+                <p className="text-xs text-slate-500">
+                  {parcelas}× de{' '}
+                  <span className="font-semibold text-slate-700">
+                    R$ {(parseFloat(valor.replace(',', '.')) / parcelas).toFixed(2).replace('.', ',')}
+                  </span>
+                </p>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Competências: {competencia} até{' '}
+                  {(() => {
+                    const [y, m] = competencia.split('-').map(Number)
+                    const d = new Date(y, m - 1 + parcelas - 1, 1)
+                    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+                  })()}
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Opções */}
           <div className="flex gap-4 pt-1">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -143,7 +196,7 @@ export function NovoLancamentoForm({ tipoInicial = 'receita', competenciaInicial
             className={`flex-1 py-2.5 rounded-lg font-semibold text-sm transition-colors disabled:opacity-40 ${
               tipo === 'receita' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white'
             }`}>
-            Registrar {tipo === 'receita' ? 'receita' : 'custo'}
+            Registrar {tipo === 'receita' ? 'receita' : 'custo'}{parcelas > 1 ? ` (${parcelas}x)` : ''}
           </button>
           <button onClick={onCancel} className="px-5 py-2.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 text-sm">
             Cancelar

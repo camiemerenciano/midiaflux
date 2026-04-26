@@ -455,7 +455,7 @@ export default function FinanceiroPage() {
         <NovoLancamentoForm
           tipoInicial={tipoNovo}
           competenciaInicial={competencia}
-          onSave={(data) => { addLancamento(data); setShowNovoLancamento(false) }}
+          onSave={(items) => { items.forEach((d) => addLancamento(d)); setShowNovoLancamento(false) }}
           onCancel={() => setShowNovoLancamento(false)}
         />
       )}

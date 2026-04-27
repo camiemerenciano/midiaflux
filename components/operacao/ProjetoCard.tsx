@@ -6,15 +6,16 @@ import { isTarefaAtrasada } from '@/lib/operacao/store'
 import { USUARIOS } from '@/lib/crm/constants'
 import { formatarData } from '@/lib/crm/score'
 import { useClientesStore } from '@/lib/clientes/store'
-import { Calendar, AlertTriangle, Clock, CheckCircle2 } from 'lucide-react'
+import { Calendar, AlertTriangle, Clock, CheckCircle2, Trash2 } from 'lucide-react'
 
 interface Props {
   projeto: Projeto
   tarefas: Tarefa[]
   onClick: () => void
+  onRemove?: () => void
 }
 
-export function ProjetoCard({ projeto, tarefas, onClick }: Props) {
+export function ProjetoCard({ projeto, tarefas, onClick, onRemove }: Props) {
   const { clientes } = useClientesStore()
   const statusConfig = STATUS_PROJETO_CONFIG[projeto.status]
   const prioConfig = PRIORIDADE_CONFIG[projeto.prioridade]
@@ -50,6 +51,22 @@ export function ProjetoCard({ projeto, tarefas, onClick }: Props) {
         <div className={`absolute top-0 right-0 text-xs font-bold px-2 py-0.5 rounded-bl-lg ${prioConfig.corBg} ${prioConfig.cor}`}>
           {prioConfig.label}
         </div>
+      )}
+
+      {/* Botão remover */}
+      {onRemove && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            if (confirm(`Remover o projeto "${projeto.nome}"? Esta ação também remove todas as tarefas associadas.`)) {
+              onRemove()
+            }
+          }}
+          className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 hover:text-red-600"
+          title="Remover projeto"
+        >
+          <Trash2 size={13} />
+        </button>
       )}
 
       {/* Header */}

@@ -16,7 +16,7 @@ import { useClientesStore } from '@/lib/clientes/store'
 import {
   X, ChevronDown, ChevronRight, Plus, AlertTriangle, Clock,
   CheckCircle2, XCircle, MessageSquare, ChevronUp, Calendar,
-  User, Zap,
+  User, Zap, Trash2,
 } from 'lucide-react'
 
 type Tab = 'tarefas' | 'fluxo' | 'atrasos'
@@ -30,16 +30,18 @@ interface Props {
   onAddTarefa: (data: Omit<Tarefa, 'id' | 'criado_em' | 'atualizado_em'>) => void
   onAddComentario: (data: Omit<Comentario, 'id' | 'criado_em'>) => void
   onUpdateStatusProjeto: (id: string, status: StatusProjeto) => void
+  onRemoverProjeto: (id: string) => void
 }
 
 export function ProjetoModal({
   projeto, tarefas, comentarios,
-  onClose, onMoverTarefa, onAddTarefa, onAddComentario, onUpdateStatusProjeto,
+  onClose, onMoverTarefa, onAddTarefa, onAddComentario, onUpdateStatusProjeto, onRemoverProjeto,
 }: Props) {
   const [tab, setTab] = useState<Tab>('tarefas')
   const [showStatusMenu, setShowStatusMenu] = useState(false)
   const [showAddTarefa, setShowAddTarefa] = useState(false)
   const [tarefaAberta, setTarefaAberta] = useState<string | null>(null)
+  const [confirmandoRemocao, setConfirmandoRemocao] = useState(false)
 
   const { clientes } = useClientesStore()
   const statusConfig = STATUS_PROJETO_CONFIG[projeto.status]
@@ -117,6 +119,25 @@ export function ProjetoModal({
                   </div>
                 )}
               </div>
+              {confirmandoRemocao ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-red-600 font-medium">Remover projeto?</span>
+                  <button onClick={() => { onRemoverProjeto(projeto.id); onClose() }}
+                    className="text-xs bg-red-600 text-white px-2.5 py-1.5 rounded-lg hover:bg-red-700 font-medium">
+                    Sim, remover
+                  </button>
+                  <button onClick={() => setConfirmandoRemocao(false)}
+                    className="text-xs border border-slate-200 text-slate-500 px-2.5 py-1.5 rounded-lg hover:bg-slate-50">
+                    Cancelar
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setConfirmandoRemocao(true)}
+                  className="p-1.5 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                  title="Remover projeto">
+                  <Trash2 size={16} />
+                </button>
+              )}
               <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100">
                 <X size={18} />
               </button>

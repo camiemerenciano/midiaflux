@@ -22,7 +22,7 @@ export default function ProjetosPage() {
   const {
     projetos, tarefas, comentarios,
     addProjeto, moverTarefa, addTarefa, addComentario,
-    updateStatusProjeto, getTarefasByProjeto,
+    updateStatusProjeto, removeProjeto, getTarefasByProjeto,
     getTarefasAtrasadas, getProjetosAguardandoCliente,
   } = useOperacaoStore()
 
@@ -166,7 +166,8 @@ export default function ProjetosPage() {
               {projetosFiltrados.filter((p) => p.status === 'aguardando_cliente').map((projeto) => (
                 <ProjetoCard key={projeto.id} projeto={projeto}
                   tarefas={getTarefasByProjeto(projeto.id)}
-                  onClick={() => setProjetoSelecionado(projeto)} />
+                  onClick={() => setProjetoSelecionado(projeto)}
+                  onRemove={() => removeProjeto(projeto.id)} />
               ))}
             </div>
           </div>
@@ -186,7 +187,8 @@ export default function ProjetosPage() {
             .map((projeto) => (
               <ProjetoCard key={projeto.id} projeto={projeto}
                 tarefas={getTarefasByProjeto(projeto.id)}
-                onClick={() => setProjetoSelecionado(projeto)} />
+                onClick={() => setProjetoSelecionado(projeto)}
+                onRemove={() => removeProjeto(projeto.id)} />
             ))}
         </div>
       </div>
@@ -212,6 +214,10 @@ export default function ProjetosPage() {
           onUpdateStatusProjeto={(id, status) => {
             updateStatusProjeto(id, status)
             setProjetoSelecionado((prev) => prev ? { ...prev, status } : null)
+          }}
+          onRemoverProjeto={(id) => {
+            removeProjeto(id)
+            setProjetoSelecionado(null)
           }}
         />
       )}

@@ -28,6 +28,7 @@ interface OperacaoStore {
   addProjeto: (projeto: Omit<Projeto, 'id' | 'criado_em' | 'atualizado_em'>) => string
   updateProjeto: (id: string, data: Partial<Projeto>) => void
   updateStatusProjeto: (id: string, status: StatusProjeto) => void
+  removeProjeto: (id: string) => void
 
   addTarefa: (tarefa: Omit<Tarefa, 'id' | 'criado_em' | 'atualizado_em'>) => void
   updateTarefa: (id: string, data: Partial<Tarefa>) => void
@@ -63,6 +64,15 @@ export const useOperacaoStore = create<OperacaoStore>()(
       updateProjeto: (id, data) =>
         set((s) => ({
           projetos: s.projetos.map((p) => p.id === id ? { ...p, ...data, atualizado_em: now() } : p),
+        })),
+
+      removeProjeto: (id) =>
+        set((s) => ({
+          projetos: s.projetos.filter((p) => p.id !== id),
+          tarefas: s.tarefas.filter((t) => t.projeto_id !== id),
+          comentarios: s.comentarios.filter((c) =>
+            !s.tarefas.filter((t) => t.projeto_id === id).some((t) => t.id === c.tarefa_id)
+          ),
         })),
 
       updateStatusProjeto: (id, status) =>

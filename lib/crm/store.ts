@@ -110,6 +110,6 @@ export const useCRMStore = create<CRMStore>()(
         }))
       },
     }),
-    { name: 'midiaflux-crm-v2' }
+    { name: 'midiaflux-crm-v2', skipHydration: true }
   )
 )

@@ -68,6 +68,6 @@ export const useEquipeStore = create<EquipeStore>()(
       getPerfil: (usuario_id) =>
         get().perfis.find((p) => p.usuario_id === usuario_id),
     }),
-    { name: 'midiaflux-equipe-v2' }
+    { name: 'midiaflux-equipe-v2', skipHydration: true }
   )
 )

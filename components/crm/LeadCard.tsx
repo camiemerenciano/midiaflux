@@ -72,6 +72,19 @@ export function LeadCard({ lead, proximoFollowUp, onClick }: Props) {
         </p>
       )}
 
+      {lead.instagram && (
+        <a
+          href={`https://instagram.com/${lead.instagram.replace('@', '')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={e => e.stopPropagation()}
+          className="flex items-center gap-1 text-xs text-pink-500 hover:text-pink-600 mt-2 transition-colors"
+        >
+          <span className="font-bold text-xs leading-none">@</span>
+          <span className="truncate">{lead.instagram.replace('@', '')}</span>
+        </a>
+      )}
+
       <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
         <span className="text-xs text-slate-400">{lead.cidade ?? lead.estado}</span>
         {responsavel && (

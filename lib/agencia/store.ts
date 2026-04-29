@@ -67,6 +67,6 @@ export const useAgenciaStore = create<AgenciaStore>()(
       removeMembro: (id) =>
         set((s) => ({ membros: s.membros.filter((m) => m.id !== id) })),
     }),
-    { name: 'midiaflux-agencia-v1' }
+    { name: 'midiaflux-agencia-v1', skipHydration: true }
   )
 )

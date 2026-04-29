@@ -122,6 +122,6 @@ export const useClientesStore = create<ClientesStore>()(
       getContatosByCliente: (clienteId) =>
         get().contatos.filter((c) => c.cliente_id === clienteId),
     }),
-    { name: 'midiaflux-clientes-v2' }
+    { name: 'midiaflux-clientes-v2', skipHydration: true }
   )
 )

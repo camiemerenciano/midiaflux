@@ -76,23 +76,24 @@ export function classificarScore(score: number): ScoreClassificacao {
 }
 
 export function formatarMoeda(valor?: number): string {
-  if (!valor) return '—'
-  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+  if (valor === undefined || valor === null) return '—'
+  const negativo = valor < 0
+  const abs = Math.abs(valor)
+  const inteiro = Math.floor(abs)
+  const centavos = Math.round((abs - inteiro) * 100)
+  const inteiroFormatado = inteiro.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  const centavosFormatados = centavos.toString().padStart(2, '0')
+  return `${negativo ? '-' : ''}R$ ${inteiroFormatado},${centavosFormatados}`
 }
 
 export function formatarData(iso: string): string {
-  return new Date(iso).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
+  const [y, m, d] = iso.slice(0, 10).split('-')
+  return `${d}/${m}/${y}`
 }
 
 export function formatarDataHora(iso: string): string {
-  return new Date(iso).toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  const [datePart, timePart] = iso.split('T')
+  const [y, m, d] = datePart.split('-')
+  const [h, min] = (timePart ?? '00:00').split(':')
+  return `${d}/${m} ${h}:${min}`
 }

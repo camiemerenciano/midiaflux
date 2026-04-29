@@ -161,7 +161,7 @@ export const useOperacaoStore = create<OperacaoStore>()(
       getProjetosAguardandoCliente: () =>
         get().projetos.filter((p) => p.status === 'aguardando_cliente'),
     }),
-    { name: 'midiaflux-operacao-v2' }
+    { name: 'midiaflux-operacao-v2', skipHydration: true }
   )
 )
 

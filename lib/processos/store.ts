@@ -49,6 +49,6 @@ export const useProcessosStore = create<ProcessosStore>()(
           ),
         })),
     }),
-    { name: 'midiaflux-processos-v2' }
+    { name: 'midiaflux-processos-v2', skipHydration: true }
   )
 )

@@ -68,6 +68,14 @@ export const STAGE_CONFIG: Record<
     probabilidade: 70,
     slaHoras: 72,
   },
+  em_andamento: {
+    label: 'Em Andamento',
+    cor: 'text-teal-600',
+    corBg: 'bg-teal-50',
+    corBorda: 'border-teal-300',
+    probabilidade: 85,
+    slaHoras: null,
+  },
   fechado: {
     label: 'Fechado',
     cor: 'text-emerald-600',
@@ -95,6 +103,7 @@ export const STAGE_ORDER: FunnelStage[] = [
   'follow_up',
   'reuniao_marcada',
   'proposta_enviada',
+  'em_andamento',
   'fechado',
   'perdido',
 ]

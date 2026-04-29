@@ -7,6 +7,7 @@ export type FunnelStage =
   | 'follow_up'
   | 'reuniao_marcada'
   | 'proposta_enviada'
+  | 'em_andamento'
   | 'fechado'
   | 'perdido'
 

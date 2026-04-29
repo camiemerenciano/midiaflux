@@ -174,6 +174,6 @@ export const useFinanceiroStore = create<FinanceiroStore>()(
         })
       },
     }),
-    { name: 'midiaflux-financeiro-v2' }
+    { name: 'midiaflux-financeiro-v2', skipHydration: true }
   )
 )

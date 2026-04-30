@@ -151,6 +151,7 @@ export default function CRMPage() {
           followUps={followUps}
           onLeadClick={setLeadSelecionado}
           onAddLead={handleAddLead}
+          onMoverLead={moverLead}
         />
       </div>
 

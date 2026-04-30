@@ -13,6 +13,7 @@ interface CRMStore {
 
   addLead: (lead: Omit<Lead, 'id' | 'criado_em' | 'atualizado_em'>) => void
   updateLead: (id: string, data: Partial<Lead>) => void
+  removeLead: (id: string) => void
   moverLead: (id: string, stage: FunnelStage) => void
   addInteracao: (interacao: Omit<Interacao, 'id' | 'criado_em'>) => void
   addFollowUp: (followUp: Omit<FollowUp, 'id' | 'criado_em'>) => void

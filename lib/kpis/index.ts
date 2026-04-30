@@ -32,10 +32,9 @@ export const EMOJI_CLASSIFICACAO: Record<Classificacao, string> = {
 // ─── 1. Taxa de Conversão ──────────────────────────────────────────────────────
 
 const ESTAGIOS_QUALIFICADO: FunnelStage[] = [
-  'lead_qualificado', 'abordagem_enviada', 'conversa_iniciada',
-  'reuniao_marcada', 'proposta_enviada', 'fechado',
+  'qualificado', 'proposta_enviada', 'negociando', 'fechado',
 ]
-const ESTAGIOS_PROPOSTA: FunnelStage[] = ['proposta_enviada', 'fechado']
+const ESTAGIOS_PROPOSTA: FunnelStage[] = ['proposta_enviada', 'negociando', 'fechado']
 
 export interface KPIConversao {
   totalLeads: number
@@ -58,7 +57,7 @@ export function calcularConversao(leads: Lead[]): KPIConversao {
   const qualif   = leads.filter(l => ESTAGIOS_QUALIFICADO.includes(l.status)).length
   const propostas = leads.filter(l => ESTAGIOS_PROPOSTA.includes(l.status)).length
   const fechados  = leads.filter(l => l.status === 'fechado').length
-  const perdidos  = leads.filter(l => l.status === 'perdido').length
+  const perdidos  = leads.filter(l => l.status === 'sem_interesse').length
 
   const pct = (n: number, d: number) => d > 0 ? Math.round((n / d) * 100) : null
 

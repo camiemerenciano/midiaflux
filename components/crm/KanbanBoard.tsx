@@ -62,7 +62,7 @@ export function KanbanBoard({ leads, followUps, onLeadClick, onAddLead }: Props)
                 />
               ))}
 
-              {stage !== 'fechado' && stage !== 'perdido' && (
+              {stage !== 'fechado' && stage !== 'sem_interesse' && stage !== 'pausado' && (
                 <button
                   onClick={() => onAddLead(stage)}
                   className="w-full flex items-center justify-center gap-1 py-2 text-xs text-slate-400 hover:text-slate-600 hover:bg-white rounded-md border border-dashed border-slate-200 hover:border-slate-300 transition-all"

@@ -66,6 +66,13 @@ export const useCRMStore = create<CRMStore>()(
         }))
       },
 
+      removeLead: (id) =>
+        set((s) => ({
+          leads: s.leads.filter((l) => l.id !== id),
+          interacoes: s.interacoes.filter((i) => i.lead_id !== id),
+          followUps: s.followUps.filter((f) => f.lead_id !== id),
+        })),
+
       moverLead: (id, stage) => {
         set((s) => ({
           leads: s.leads.map((l) =>
@@ -111,6 +118,6 @@ export const useCRMStore = create<CRMStore>()(
         }))
       },
     }),
-    { name: 'midiaflux-crm-v2', skipHydration: true }
+    { name: 'midiaflux-crm-v3', skipHydration: true }
   )
 )

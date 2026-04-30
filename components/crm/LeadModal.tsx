@@ -28,6 +28,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Plus,
+  Trash2,
 } from 'lucide-react'
 
 type Tab = 'dados' | 'interacoes' | 'followups'
@@ -41,6 +42,7 @@ interface Props {
   onAddInteracao: (data: Omit<Interacao, 'id' | 'criado_em'>) => void
   onAddFollowUp: (data: Omit<FollowUp, 'id' | 'criado_em'>) => void
   onConcluirFollowUp: (id: string) => void
+  onRemover: (id: string) => void
 }
 
 export function LeadModal({
@@ -52,11 +54,13 @@ export function LeadModal({
   onAddInteracao,
   onAddFollowUp,
   onConcluirFollowUp,
+  onRemover,
 }: Props) {
   const [tab, setTab] = useState<Tab>('dados')
   const [showMoverMenu, setShowMoverMenu] = useState(false)
   const [showAddInteracao, setShowAddInteracao] = useState(false)
   const [showAddFollowUp, setShowAddFollowUp] = useState(false)
+  const [confirmandoRemocao, setConfirmandoRemocao] = useState(false)
 
   const leadInteracoes = interacoes
     .filter((i) => i.lead_id === lead.id)
@@ -85,19 +89,47 @@ export function LeadModal({
               {lead.nome_contato} · {CARGO_LABELS[lead.cargo_contato]}
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="ml-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors flex-none"
-          >
-            <X size={18} />
-          </button>
+          <div className="ml-4 flex items-center gap-2 flex-none">
+            {confirmandoRemocao ? (
+              <>
+                <span className="text-xs text-red-600 font-medium">Excluir lead?</span>
+                <button
+                  onClick={() => { onRemover(lead.id); onClose() }}
+                  className="text-xs bg-red-600 text-white px-2.5 py-1.5 rounded-lg hover:bg-red-700 font-medium"
+                >
+                  Sim
+                </button>
+                <button
+                  onClick={() => setConfirmandoRemocao(false)}
+                  className="text-xs border border-slate-200 text-slate-500 px-2.5 py-1.5 rounded-lg hover:bg-slate-50"
+                >
+                  Não
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setConfirmandoRemocao(true)}
+                className="p-1.5 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                title="Excluir lead"
+              >
+                <Trash2 size={16} />
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Stage bar + mover */}
         <div className="px-6 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 overflow-x-auto">
-            {STAGE_ORDER.filter(s => s !== 'perdido').map((stage, idx) => {
-              const current = STAGE_ORDER.indexOf(lead.status)
+            {STAGE_ORDER.filter(s => s !== 'sem_interesse' && s !== 'pausado').map((stage, idx) => {
+              const progressStages = STAGE_ORDER.filter(s => s !== 'sem_interesse' && s !== 'pausado') as FunnelStage[]
+              const current = progressStages.indexOf(lead.status as typeof progressStages[number])
               const thisIdx = idx
               const isDone = thisIdx < current
               const isCurrent = stage === lead.status
@@ -115,7 +147,7 @@ export function LeadModal({
                   >
                     {isCurrent ? '● ' : isDone ? '✓ ' : ''}{cfg.label}
                   </span>
-                  {idx < STAGE_ORDER.filter(s => s !== 'perdido').length - 1 && (
+                  {idx < progressStages.length - 1 && (
                     <ChevronRight size={12} className="text-slate-300 flex-none" />
                   )}
                 </div>

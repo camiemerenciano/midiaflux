@@ -35,11 +35,11 @@ export default function DashboardPage() {
   const lancamentosMes = useMemo(() => lancamentos.filter(l => l.competencia === COMPETENCIA_ATUAL), [lancamentos])
 
   // ── Cálculos CRM ─────────────────────────────────────────────────────────
-  const leadsAtivos = leads.filter(l => !['fechado', 'perdido', 'arquivado'].includes(l.status))
-  const leadsQualificados = leads.filter(l => ['lead_qualificado', 'abordagem_enviada', 'conversa_iniciada', 'reuniao_marcada', 'proposta_enviada'].includes(l.status))
+  const leadsAtivos = leads.filter(l => !['fechado', 'sem_interesse'].includes(l.status))
+  const leadsQualificados = leads.filter(l => ['qualificado', 'proposta_enviada', 'negociando', 'em_conversa'].includes(l.status))
   const propostas = leads.filter(l => l.status === 'proposta_enviada')
   const fechados = leads.filter(l => l.status === 'fechado')
-  const perdidos = leads.filter(l => l.status === 'perdido')
+  const perdidos = leads.filter(l => l.status === 'sem_interesse')
   const taxaConversao = fechados.length + perdidos.length > 0
     ? Math.round((fechados.length / (fechados.length + perdidos.length)) * 100) : 0
   const receitaPipeline = leadsQualificados.reduce((s, l) => s + (l.valor_estimado ?? 0) * (l.probabilidade / 100), 0)

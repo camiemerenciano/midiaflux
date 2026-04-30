@@ -11,12 +11,12 @@ import { NewLeadForm } from '@/components/crm/NewLeadForm'
 import { Search, SlidersHorizontal, Plus, TrendingUp, Users, DollarSign, Target } from 'lucide-react'
 
 export default function CRMPage() {
-  const { leads, interacoes, followUps, addLead, moverLead, addInteracao, addFollowUp, concluirFollowUp } =
+  const { leads, interacoes, followUps, addLead, removeLead, moverLead, addInteracao, addFollowUp, concluirFollowUp } =
     useCRMStore()
 
   const [leadSelecionado, setLeadSelecionado] = useState<Lead | null>(null)
   const [showNewLead, setShowNewLead] = useState(false)
-  const [initialStage, setInitialStage] = useState<FunnelStage>('lead_captado')
+  const [initialStage, setInitialStage] = useState<FunnelStage>('identificado')
   const [busca, setBusca] = useState('')
   const [filtroResponsavel, setFiltroResponsavel] = useState('')
 
@@ -33,11 +33,11 @@ export default function CRMPage() {
 
   // KPIs do topo
   const leadsAtivos = leads.filter(
-    (l) => l.status !== 'fechado' && l.status !== 'perdido'
+    (l) => l.status !== 'fechado' && l.status !== 'sem_interesse'
   ).length
 
   const receitaPrevista = leads
-    .filter((l) => l.status !== 'perdido')
+    .filter((l) => l.status !== 'sem_interesse')
     .reduce((sum, l) => sum + (l.valor_estimado ?? 0) * (l.probabilidade / 100), 0)
 
   const receitaFechada = leads
@@ -47,12 +47,12 @@ export default function CRMPage() {
   const totalPropostas = leads.filter((l) => l.status === 'proposta_enviada').length
   const totalFechados = leads.filter((l) => l.status === 'fechado').length
   const taxaConversao =
-    totalFechados + leads.filter((l) => l.status === 'perdido').length > 0
-      ? Math.round((totalFechados / (totalFechados + leads.filter((l) => l.status === 'perdido').length)) * 100)
+    totalFechados + leads.filter((l) => l.status === 'sem_interesse').length > 0
+      ? Math.round((totalFechados / (totalFechados + leads.filter((l) => l.status === 'sem_interesse').length)) * 100)
       : 0
 
   function handleAddLead(stage?: string) {
-    setInitialStage((stage as FunnelStage) ?? 'lead_captado')
+    setInitialStage((stage as FunnelStage) ?? 'identificado')
     setShowNewLead(true)
   }
 
@@ -170,6 +170,7 @@ export default function CRMPage() {
           onAddInteracao={addInteracao}
           onAddFollowUp={addFollowUp}
           onConcluirFollowUp={concluirFollowUp}
+          onRemover={(id) => { removeLead(id); setLeadSelecionado(null) }}
         />
       )}
 

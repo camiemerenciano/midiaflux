@@ -13,19 +13,15 @@ interface Props {
 }
 
 const STATUS_OPCOES: FunnelStage[] = [
-  'lead_captado',
-  'lead_qualificado',
-  'abordagem_enviada',
-  'conversa_iniciada',
-  'sem_retorno',
-  'follow_up',
-  'reuniao_marcada',
+  'identificado',
+  'abordado',
+  'em_conversa',
+  'qualificado',
   'proposta_enviada',
-  'fechado',
-  'perdido',
+  'negociando',
 ]
 
-export function NewLeadForm({ initialStage = 'lead_captado', onSave, onCancel }: Props) {
+export function NewLeadForm({ initialStage = 'identificado', onSave, onCancel }: Props) {
   const hoje = new Date().toISOString().slice(0, 10)
 
   const [form, setForm] = useState({

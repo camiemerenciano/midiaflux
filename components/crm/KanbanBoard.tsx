@@ -28,9 +28,10 @@ interface Props {
   onLeadClick: (lead: Lead) => void
   onAddLead: (stage?: string) => void
   onMoverLead: (leadId: string, stage: FunnelStage) => void
+  onEditLead: (lead: Lead) => void
 }
 
-export function KanbanBoard({ leads, followUps, onLeadClick, onAddLead, onMoverLead }: Props) {
+export function KanbanBoard({ leads, followUps, onLeadClick, onAddLead, onMoverLead, onEditLead }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [overStage, setOverStage] = useState<FunnelStage | null>(null)
 
@@ -94,6 +95,7 @@ export function KanbanBoard({ leads, followUps, onLeadClick, onAddLead, onMoverL
             activeLeadId={activeId}
             getProximoFollowUp={getProximoFollowUp}
             onLeadClick={onLeadClick}
+            onEditLead={onEditLead}
             onAddLead={onAddLead}
           />
         ))}
@@ -112,7 +114,7 @@ export function KanbanBoard({ leads, followUps, onLeadClick, onAddLead, onMoverL
 
 function KanbanColumn({
   stage, leads, followUps, isOver, isDragging, activeLeadId,
-  getProximoFollowUp, onLeadClick, onAddLead,
+  getProximoFollowUp, onLeadClick, onEditLead, onAddLead,
 }: {
   stage: FunnelStage
   leads: Lead[]
@@ -122,6 +124,7 @@ function KanbanColumn({
   activeLeadId: string | null
   getProximoFollowUp: (id: string) => FollowUp | undefined
   onLeadClick: (lead: Lead) => void
+  onEditLead: (lead: Lead) => void
   onAddLead: (stage?: string) => void
 }) {
   const { setNodeRef } = useDroppable({ id: stage })
@@ -168,6 +171,7 @@ function KanbanColumn({
             proximoFollowUp={getProximoFollowUp(lead.id)}
             isBeingDragged={activeLeadId === lead.id}
             onClick={() => onLeadClick(lead)}
+            onEdit={(e) => { e.stopPropagation(); onEditLead(lead) }}
           />
         ))}
 
@@ -195,12 +199,13 @@ function KanbanColumn({
 // ─── Card draggable ──────────────────────────────────────────────────────────
 
 function DraggableLeadCard({
-  lead, proximoFollowUp, isBeingDragged, onClick,
+  lead, proximoFollowUp, isBeingDragged, onClick, onEdit,
 }: {
   lead: Lead
   proximoFollowUp?: FollowUp
   isBeingDragged: boolean
   onClick: () => void
+  onEdit: (e: React.MouseEvent) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: lead.id,
@@ -222,6 +227,7 @@ function DraggableLeadCard({
         lead={lead}
         proximoFollowUp={proximoFollowUp}
         onClick={onClick}
+        onEdit={onEdit}
       />
     </div>
   )

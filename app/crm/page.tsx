@@ -8,13 +8,15 @@ import { formatarMoeda } from '@/lib/crm/score'
 import { KanbanBoard } from '@/components/crm/KanbanBoard'
 import { LeadModal } from '@/components/crm/LeadModal'
 import { NewLeadForm } from '@/components/crm/NewLeadForm'
+import { EditarLeadForm } from '@/components/crm/EditarLeadForm'
 import { Search, SlidersHorizontal, Plus, TrendingUp, Users, DollarSign, Target } from 'lucide-react'
 
 export default function CRMPage() {
-  const { leads, interacoes, followUps, addLead, removeLead, moverLead, addInteracao, addFollowUp, concluirFollowUp } =
+  const { leads, interacoes, followUps, addLead, removeLead, updateLead, moverLead, addInteracao, addFollowUp, concluirFollowUp } =
     useCRMStore()
 
   const [leadSelecionado, setLeadSelecionado] = useState<Lead | null>(null)
+  const [leadEditando, setLeadEditando] = useState<Lead | null>(null)
   const [showNewLead, setShowNewLead] = useState(false)
   const [initialStage, setInitialStage] = useState<FunnelStage>('identificado')
   const [busca, setBusca] = useState('')
@@ -152,6 +154,7 @@ export default function CRMPage() {
           onLeadClick={setLeadSelecionado}
           onAddLead={handleAddLead}
           onMoverLead={moverLead}
+          onEditLead={setLeadEditando}
         />
       </div>
 
@@ -184,6 +187,17 @@ export default function CRMPage() {
             setShowNewLead(false)
           }}
           onCancel={() => setShowNewLead(false)}
+        />
+      )}
+
+      {leadEditando && (
+        <EditarLeadForm
+          lead={leadEditando}
+          onSave={(data) => {
+            updateLead(leadEditando.id, data)
+            setLeadEditando(null)
+          }}
+          onCancel={() => setLeadEditando(null)}
         />
       )}
     </div>

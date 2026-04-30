@@ -4,7 +4,7 @@ import { Lead, FollowUp } from '@/lib/crm/types'
 import { CARGO_LABELS, USUARIOS } from '@/lib/crm/constants'
 import { formatarMoeda, formatarDataHora } from '@/lib/crm/score'
 import { ScoreBadge } from './ScoreBadge'
-import { Clock, Phone, MessageSquare, Mail, Calendar } from 'lucide-react'
+import { Clock, Phone, MessageSquare, Mail, Calendar, Pencil } from 'lucide-react'
 
 const FOLLOWUP_ICON = {
   ligar: Phone,
@@ -18,9 +18,10 @@ interface Props {
   lead: Lead
   proximoFollowUp?: FollowUp
   onClick: () => void
+  onEdit?: (e: React.MouseEvent) => void
 }
 
-export function LeadCard({ lead, proximoFollowUp, onClick }: Props) {
+export function LeadCard({ lead, proximoFollowUp, onClick, onEdit }: Props) {
   const responsavel = USUARIOS.find((u) => u.id === lead.responsavel_id)
   const FollowIcon = proximoFollowUp ? FOLLOWUP_ICON[proximoFollowUp.tipo] : null
 
@@ -87,14 +88,25 @@ export function LeadCard({ lead, proximoFollowUp, onClick }: Props) {
 
       <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
         <span className="text-xs text-slate-400">{lead.cidade ?? lead.estado}</span>
-        {responsavel && (
-          <span
-            className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-white text-xs font-bold ${responsavel.cor}`}
-            title={responsavel.nome}
-          >
-            {responsavel.iniciais}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5">
+          {onEdit && (
+            <button
+              onClick={onEdit}
+              className="p-1 rounded text-slate-300 hover:text-blue-500 hover:bg-blue-50 transition-colors opacity-0 group-hover:opacity-100"
+              title="Editar lead"
+            >
+              <Pencil size={12} />
+            </button>
+          )}
+          {responsavel && (
+            <span
+              className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-white text-xs font-bold ${responsavel.cor}`}
+              title={responsavel.nome}
+            >
+              {responsavel.iniciais}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   )

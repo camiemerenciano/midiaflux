@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Cliente, Contrato } from '@/lib/clientes/types'
 import { TIPO_CLIENTE_CONFIG, STATUS_CLIENTE_CONFIG } from '@/lib/clientes/constants'
 import { SEGMENTO_LABELS, USUARIOS } from '@/lib/crm/constants'
@@ -31,6 +31,7 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange }: Props
     new Date(contratoAtivo.data_fim) <= new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [hovered, setHovered] = useState(false)
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -64,7 +65,9 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange }: Props
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-xl border-l-4 border border-slate-200 cursor-pointer hover:shadow-md transition-all group overflow-hidden ${bordaEsquerda}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={`bg-white rounded-xl border-l-4 border border-slate-200 cursor-pointer hover:shadow-md transition-all overflow-hidden ${bordaEsquerda}`}
     >
 
       {/* ── Foto de capa ─────────────────────────────────────────────── */}
@@ -87,10 +90,11 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange }: Props
         {onFotoChange && (
           <button
             onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click() }}
-            className="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 hover:bg-black/70 text-white text-xs px-2.5 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
+            className="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 hover:bg-black/70 text-white text-xs px-2.5 py-1.5 rounded-full transition-opacity backdrop-blur-sm"
+            style={{ opacity: hovered ? 1 : 0 }}
           >
             <Camera size={12} />
-            {cliente.foto_capa ? 'Alterar' : 'Adicionar foto'}
+            {cliente.foto_capa ? 'Alterar foto' : 'Adicionar foto'}
           </button>
         )}
 
@@ -98,7 +102,8 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange }: Props
         {onFotoChange && cliente.foto_capa && (
           <button
             onClick={(e) => { e.stopPropagation(); onFotoChange(cliente.id, null) }}
-            className="absolute top-2 right-2 bg-black/50 hover:bg-red-600 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
+            className="absolute top-2 right-2 bg-black/50 hover:bg-red-600 text-white text-xs px-2 py-1 rounded-full transition-opacity backdrop-blur-sm"
+            style={{ opacity: hovered ? 1 : 0 }}
           >
             ✕
           </button>
@@ -119,7 +124,7 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange }: Props
         {/* Topo */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="min-w-0">
-            <p className="font-bold text-slate-800 truncate group-hover:text-blue-600 transition-colors">
+            <p className={`font-bold truncate transition-colors ${hovered ? 'text-blue-600' : 'text-slate-800'}`}>
               {cliente.nome_empresa}
             </p>
             <p className="text-xs text-slate-500 mt-0.5">{SEGMENTO_LABELS[cliente.segmento]}</p>

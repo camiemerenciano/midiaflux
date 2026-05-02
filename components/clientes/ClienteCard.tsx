@@ -41,7 +41,7 @@ export function ClienteCard({ cliente, contratos, onClick, onEdit }: Props) {
       className={`bg-white rounded-xl border-l-4 border border-slate-200 cursor-pointer hover:shadow-md transition-all overflow-hidden ${bordaEsquerda}`}
     >
       {/* ── Foto de capa (só exibição) ─────────────────────────────── */}
-      <div className="relative w-full h-28 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
+      <div className="relative w-full aspect-square bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
         {cliente.foto_capa ? (
           <img
             src={cliente.foto_capa}

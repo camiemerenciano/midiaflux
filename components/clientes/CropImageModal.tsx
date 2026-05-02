@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { X, ZoomIn, ZoomOut } from 'lucide-react'
 
-// Dimensões do frame visual de crop (16:5 — proporcional ao card)
-const FRAME_W = 480
-const FRAME_H = 150
+// Dimensões do frame visual de crop (1:1 — quadrado)
+const FRAME_W = 400
+const FRAME_H = 400
 
-// Dimensões da imagem final salva
-const OUTPUT_W = 800
-const OUTPUT_H = 250
+// Dimensões da imagem final salva (1:1)
+const OUTPUT_W = 600
+const OUTPUT_H = 600
 
 interface Props {
   src: string              // data URL da imagem original

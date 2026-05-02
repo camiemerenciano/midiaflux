@@ -122,7 +122,7 @@ export function EditarClienteForm({ cliente, onSave, onCancel }: Props) {
           {/* Foto de capa */}
           <div>
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Foto de Capa</p>
-            <div className="relative w-full h-32 rounded-xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-200 mb-3">
+            <div className="relative w-40 aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-200 mb-3">
               {fotoCapa ? (
                 <img src={fotoCapa} alt="Capa" className="w-full h-full object-cover" />
               ) : (

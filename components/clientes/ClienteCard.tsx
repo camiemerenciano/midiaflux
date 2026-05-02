@@ -46,7 +46,7 @@ export function ClienteCard({ cliente, contratos, onClick, onEdit }: Props) {
           <img
             src={cliente.foto_capa}
             alt={cliente.nome_empresa}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">

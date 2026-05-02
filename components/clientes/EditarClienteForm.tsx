@@ -6,7 +6,6 @@ import { TIPO_CLIENTE_CONFIG, STATUS_CLIENTE_CONFIG } from '@/lib/clientes/const
 import { SEGMENTO_LABELS, PORTE_LABELS, USUARIOS } from '@/lib/crm/constants'
 import { Segmento, Porte } from '@/lib/crm/types'
 import { X, Camera, Trash2 } from 'lucide-react'
-import { CropImageModal } from './CropImageModal'
 
 interface Props {
   cliente: Cliente
@@ -15,8 +14,7 @@ interface Props {
 }
 
 export function EditarClienteForm({ cliente, onSave, onCancel }: Props) {
-  const [fotoCapa, setFotoCapa]       = useState<string | undefined>(cliente.foto_capa)
-  const [srcParaCrop, setSrcParaCrop] = useState<string | null>(null)
+  const [fotoCapa, setFotoCapa] = useState<string | undefined>(cliente.foto_capa)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -24,8 +22,18 @@ export function EditarClienteForm({ cliente, onSave, onCancel }: Props) {
     if (!file) return
     const reader = new FileReader()
     reader.onload = (ev) => {
-      // Abre o modal de crop com a imagem original
-      setSrcParaCrop(ev.target?.result as string)
+      const img = new Image()
+      img.onload = () => {
+        // Redimensiona preservando proporção (max 800px no lado maior)
+        const maxPx = 800
+        const ratio = Math.min(maxPx / img.width, maxPx / img.height, 1)
+        const canvas = document.createElement('canvas')
+        canvas.width  = Math.round(img.width  * ratio)
+        canvas.height = Math.round(img.height * ratio)
+        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height)
+        setFotoCapa(canvas.toDataURL('image/jpeg', 0.85))
+      }
+      img.src = ev.target?.result as string
     }
     reader.readAsDataURL(file)
     e.target.value = ''
@@ -96,14 +104,6 @@ export function EditarClienteForm({ cliente, onSave, onCancel }: Props) {
   }
 
   return (
-    <>
-    {srcParaCrop && (
-      <CropImageModal
-        src={srcParaCrop}
-        onConfirm={(base64) => { setFotoCapa(base64); setSrcParaCrop(null) }}
-        onCancel={() => setSrcParaCrop(null)}
-      />
-    )}
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden">
 
@@ -266,7 +266,6 @@ export function EditarClienteForm({ cliente, onSave, onCancel }: Props) {
         </div>
       </div>
     </div>
-    </>
   )
 }
 

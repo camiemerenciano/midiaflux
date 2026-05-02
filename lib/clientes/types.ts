@@ -100,6 +100,7 @@ export interface Cliente {
   data_inicio: string
   data_fim?: string
   nps?: number
+  foto_capa?: string  // base64 ou URL
   observacoes?: string
   criado_em: string
   atualizado_em: string

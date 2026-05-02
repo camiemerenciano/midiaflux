@@ -17,7 +17,7 @@ const TODOS_STATUS: (StatusCliente | 'todos')[] = ['todos', 'ativo', 'em_risco',
 export default function ClientesPage() {
   const {
     clientes, contatos, contratos, entregas,
-    updateStatus, addEntrega, addCliente, addContato, addContrato, getMRR,
+    updateStatus, updateCliente, addEntrega, addCliente, addContato, addContrato, getMRR,
     getContratosAtivos, getEntregasByCliente, getContatosByCliente,
   } = useClientesStore()
 
@@ -201,6 +201,7 @@ export default function ClientesPage() {
                         cliente={cliente}
                         contratos={contratos.filter((k) => k.cliente_id === cliente.id)}
                         onClick={() => setClienteSelecionado(cliente)}
+                        onFotoChange={(id, foto) => updateCliente(id, { foto_capa: foto ?? undefined })}
                       />
                     ))}
                 </div>

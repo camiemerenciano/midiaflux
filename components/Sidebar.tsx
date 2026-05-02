@@ -12,6 +12,7 @@ import {
   DollarSign,
   BarChart3,
   BookOpen,
+  CalendarDays,
   Settings,
   Zap,
   ChevronUp,
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { href: '/projetos', label: 'Projetos', icon: FolderKanban },
   { href: '/financeiro', label: 'Financeiro', icon: DollarSign },
   { href: '/equipe', label: 'Equipe', icon: Users2 },
+  { href: '/agenda', label: 'Agenda', icon: CalendarDays },
   { href: '/processos', label: 'Processos', icon: BookOpen },
   { href: '/relatorios', label: 'Relatórios', icon: BarChart3 },
 ]

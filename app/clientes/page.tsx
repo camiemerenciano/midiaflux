@@ -9,6 +9,7 @@ import { formatarMoeda, formatarData } from '@/lib/crm/score'
 import { ClienteCard } from '@/components/clientes/ClienteCard'
 import { ClienteModal } from '@/components/clientes/ClienteModal'
 import { NovoClienteForm } from '@/components/clientes/NovoClienteForm'
+import { EditarClienteForm } from '@/components/clientes/EditarClienteForm'
 import { Search, Plus, TrendingUp, AlertTriangle, Users, RefreshCw } from 'lucide-react'
 
 const TODOS_TIPOS: (TipoCliente | 'todos')[] = ['todos', 'retainer', 'projeto', 'performance', 'consultoria']
@@ -22,6 +23,7 @@ export default function ClientesPage() {
   } = useClientesStore()
 
   const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(null)
+  const [clienteEditando, setClienteEditando] = useState<Cliente | null>(null)
   const [showNovoCliente, setShowNovoCliente] = useState(false)
   const [busca, setBusca] = useState('')
   const [filtroTipo, setFiltroTipo] = useState<TipoCliente | 'todos'>('todos')
@@ -202,6 +204,7 @@ export default function ClientesPage() {
                         contratos={contratos.filter((k) => k.cliente_id === cliente.id)}
                         onClick={() => setClienteSelecionado(cliente)}
                         onFotoChange={(id, foto) => updateCliente(id, { foto_capa: foto ?? undefined })}
+                        onEdit={(e) => { e.stopPropagation(); setClienteEditando(cliente) }}
                       />
                     ))}
                 </div>
@@ -259,6 +262,18 @@ export default function ClientesPage() {
             setShowNovoCliente(false)
           }}
           onCancel={() => setShowNovoCliente(false)}
+        />
+      )}
+
+      {/* Formulário de edição */}
+      {clienteEditando && (
+        <EditarClienteForm
+          cliente={clienteEditando}
+          onSave={(data) => {
+            updateCliente(clienteEditando.id, data)
+            setClienteEditando(null)
+          }}
+          onCancel={() => setClienteEditando(null)}
         />
       )}
     </div>

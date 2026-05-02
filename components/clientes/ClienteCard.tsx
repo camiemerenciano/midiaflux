@@ -1,21 +1,19 @@
 'use client'
 
-import { useRef } from 'react'
 import { Cliente, Contrato } from '@/lib/clientes/types'
 import { TIPO_CLIENTE_CONFIG, STATUS_CLIENTE_CONFIG } from '@/lib/clientes/constants'
 import { SEGMENTO_LABELS, USUARIOS } from '@/lib/crm/constants'
 import { formatarMoeda, formatarData } from '@/lib/crm/score'
-import { Star, Calendar, AlertTriangle, Camera, Pencil, X } from 'lucide-react'
+import { Star, Calendar, AlertTriangle, Pencil } from 'lucide-react'
 
 interface Props {
   cliente: Cliente
   contratos: Contrato[]
   onClick: () => void
-  onFotoChange?: (clienteId: string, base64: string | null) => void
-  onEdit?: (e: React.MouseEvent) => void
+  onEdit?: () => void
 }
 
-export function ClienteCard({ cliente, contratos, onClick, onFotoChange, onEdit }: Props) {
+export function ClienteCard({ cliente, contratos, onClick, onEdit }: Props) {
   const tipoConfig    = TIPO_CLIENTE_CONFIG[cliente.tipo]
   const statusConfig  = STATUS_CLIENTE_CONFIG[cliente.status]
   const responsavel   = USUARIOS.find((u) => u.id === cliente.responsavel_id)
@@ -31,29 +29,6 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange, onEdit 
     contratoAtivo?.data_fim &&
     new Date(contratoAtivo.data_fim) <= new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file || !onFotoChange) return
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      const img = new Image()
-      img.onload = () => {
-        const maxW = 800
-        const scale = img.width > maxW ? maxW / img.width : 1
-        const canvas = document.createElement('canvas')
-        canvas.width  = Math.round(img.width  * scale)
-        canvas.height = Math.round(img.height * scale)
-        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height)
-        onFotoChange(cliente.id, canvas.toDataURL('image/jpeg', 0.82))
-      }
-      img.src = ev.target?.result as string
-    }
-    reader.readAsDataURL(file)
-    e.target.value = ''
-  }
-
   const bordaEsquerda =
     cliente.status === 'em_risco'  ? 'border-l-red-400'   :
     cliente.status === 'pausado'   ? 'border-l-amber-400' :
@@ -65,13 +40,12 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange, onEdit 
       onClick={onClick}
       className={`bg-white rounded-xl border-l-4 border border-slate-200 cursor-pointer hover:shadow-md transition-all overflow-hidden ${bordaEsquerda}`}
     >
-
-      {/* ── Foto de capa ──────────────────────────────────────────────── */}
+      {/* ── Foto de capa (só exibição) ─────────────────────────────── */}
       <div className="relative w-full h-28 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
         {cliente.foto_capa ? (
           <img
             src={cliente.foto_capa}
-            alt={`Capa de ${cliente.nome_empresa}`}
+            alt={cliente.nome_empresa}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -81,42 +55,15 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange, onEdit 
             </span>
           </div>
         )}
-
-        {/* Botão câmera — sempre visível (sutil), fica nítido no hover */}
-        {onFotoChange && (
-          <button
-            onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click() }}
-            title={cliente.foto_capa ? 'Alterar foto' : 'Adicionar foto de capa'}
-            className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-black/40 hover:bg-black/70 text-white text-xs px-2.5 py-1.5 rounded-full transition-all backdrop-blur-sm"
-          >
-            <Camera size={12} />
-            {cliente.foto_capa ? 'Alterar' : 'Adicionar foto'}
-          </button>
-        )}
-
-        {/* Remover foto */}
-        {onFotoChange && cliente.foto_capa && (
-          <button
-            onClick={(e) => { e.stopPropagation(); onFotoChange(cliente.id, null) }}
-            title="Remover foto"
-            className="absolute top-2 right-2 bg-black/40 hover:bg-red-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center transition-all backdrop-blur-sm"
-          >
-            <X size={12} />
-          </button>
-        )}
-
-        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
       </div>
 
-      {/* ── Conteúdo ─────────────────────────────────────────────────── */}
+      {/* ── Conteúdo ─────────────────────────────────────────────── */}
       <div className="p-4">
 
         {/* Topo */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="min-w-0">
-            <p className="font-bold text-slate-800 truncate hover:text-blue-600 transition-colors">
-              {cliente.nome_empresa}
-            </p>
+            <p className="font-bold text-slate-800 truncate">{cliente.nome_empresa}</p>
             <p className="text-xs text-slate-500 mt-0.5">{SEGMENTO_LABELS[cliente.segmento]}</p>
           </div>
           <div className="flex flex-col items-end gap-1 flex-none">
@@ -134,9 +81,6 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange, onEdit 
           <div className="mb-3">
             <span className="text-xl font-bold text-slate-800">{formatarMoeda(valorExibido)}</span>
             <span className="text-sm text-slate-400">{labelValor}</span>
-            {contratoAtivo?.valor_base && (
-              <p className="text-xs text-slate-400 mt-0.5">Base: {formatarMoeda(contratoAtivo.valor_base)} + variável</p>
-            )}
           </div>
         )}
 
@@ -163,7 +107,7 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange, onEdit 
         )}
 
         {/* Alertas */}
-        {cliente.status === 'em_risco' && (
+        {cliente.status === 'em_risco' && cliente.motivo_risco && (
           <div className="flex items-start gap-1.5 bg-red-50 border border-red-100 rounded-lg px-2 py-1.5 mb-2">
             <AlertTriangle size={12} className="text-red-500 mt-0.5 flex-none" />
             <p className="text-xs text-red-600 line-clamp-2">{cliente.motivo_risco}</p>
@@ -178,21 +122,23 @@ export function ClienteCard({ cliente, contratos, onClick, onFotoChange, onEdit 
         )}
 
         {/* Rodapé */}
-        <div className="flex items-center justify-between pt-1">
-          <p className="text-xs text-slate-400">{cliente.cidade} — {cliente.estado}</p>
-          <div className="flex items-center gap-1.5">
+        <div className="flex items-center justify-between pt-2 border-t border-slate-100 mt-1">
+          <p className="text-xs text-slate-400">{cliente.cidade}{cliente.estado ? ` — ${cliente.estado}` : ''}</p>
+          <div className="flex items-center gap-2">
             {onEdit && (
               <button
-                onClick={onEdit}
-                title="Editar dados do cliente"
-                className="p-1 rounded text-slate-300 hover:text-blue-500 hover:bg-blue-50 transition-colors"
+                onClick={(e) => { e.stopPropagation(); onEdit() }}
+                className="flex items-center gap-1 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-1 rounded-lg hover:bg-blue-100 transition-colors font-medium"
               >
-                <Pencil size={13} />
+                <Pencil size={11} />
+                Editar
               </button>
             )}
             {responsavel && (
-              <span className={`w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center ${responsavel.cor}`}
-                title={responsavel.nome}>
+              <span
+                className={`w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center ${responsavel.cor}`}
+                title={responsavel.nome}
+              >
                 {responsavel.iniciais}
               </span>
             )}

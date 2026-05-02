@@ -203,8 +203,7 @@ export default function ClientesPage() {
                         cliente={cliente}
                         contratos={contratos.filter((k) => k.cliente_id === cliente.id)}
                         onClick={() => setClienteSelecionado(cliente)}
-                        onFotoChange={(id, foto) => updateCliente(id, { foto_capa: foto ?? undefined })}
-                        onEdit={(e) => { e.stopPropagation(); setClienteEditando(cliente) }}
+                        onEdit={() => setClienteEditando(cliente)}
                       />
                     ))}
                 </div>
@@ -229,6 +228,7 @@ export default function ClientesPage() {
                     cliente={cliente}
                     contratos={contratos.filter((k) => k.cliente_id === cliente.id)}
                     onClick={() => setClienteSelecionado(cliente)}
+                    onEdit={() => setClienteEditando(cliente)}
                   />
                 ))}
             </div>

@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Cliente, TipoCliente, StatusCliente } from '@/lib/clientes/types'
 import { TIPO_CLIENTE_CONFIG, STATUS_CLIENTE_CONFIG } from '@/lib/clientes/constants'
 import { SEGMENTO_LABELS, PORTE_LABELS, USUARIOS } from '@/lib/crm/constants'
 import { Segmento, Porte } from '@/lib/crm/types'
-import { X } from 'lucide-react'
+import { X, Camera, Trash2 } from 'lucide-react'
 
 interface Props {
   cliente: Cliente
@@ -14,6 +14,30 @@ interface Props {
 }
 
 export function EditarClienteForm({ cliente, onSave, onCancel }: Props) {
+  const [fotoCapa, setFotoCapa] = useState<string | undefined>(cliente.foto_capa)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const img = new Image()
+      img.onload = () => {
+        const maxW = 800
+        const scale = img.width > maxW ? maxW / img.width : 1
+        const canvas = document.createElement('canvas')
+        canvas.width  = Math.round(img.width  * scale)
+        canvas.height = Math.round(img.height * scale)
+        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height)
+        setFotoCapa(canvas.toDataURL('image/jpeg', 0.82))
+      }
+      img.src = ev.target?.result as string
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
+
   const [form, setForm] = useState({
     nome_empresa: cliente.nome_empresa,
     cnpj:         cliente.cnpj ?? '',
@@ -41,6 +65,7 @@ export function EditarClienteForm({ cliente, onSave, onCancel }: Props) {
   function handleSave() {
     if (!form.nome_empresa.trim()) return
     onSave({
+      foto_capa:     fotoCapa,
       nome_empresa:  form.nome_empresa.trim(),
       cnpj:          form.cnpj  || undefined,
       segmento:      form.segmento,
@@ -92,6 +117,43 @@ export function EditarClienteForm({ cliente, onSave, onCancel }: Props) {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
+
+          {/* Foto de capa */}
+          <div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Foto de Capa</p>
+            <div className="relative w-full h-32 rounded-xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-200 mb-3">
+              {fotoCapa ? (
+                <img src={fotoCapa} alt="Capa" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-slate-300 text-4xl font-black select-none">
+                    {form.nome_empresa.charAt(0).toUpperCase() || '?'}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2 bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                <Camera size={14} />
+                {fotoCapa ? 'Alterar foto' : 'Adicionar foto de capa'}
+              </button>
+              {fotoCapa && (
+                <button
+                  type="button"
+                  onClick={() => setFotoCapa(undefined)}
+                  className="flex items-center gap-2 border border-red-200 text-red-600 text-sm px-3 py-2 rounded-lg hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 size={14} />
+                  Remover
+                </button>
+              )}
+            </div>
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFoto} />
+          </div>
 
           {/* Empresa */}
           <Section title="Empresa">
